@@ -9,7 +9,7 @@ dnf -y install ansible mc net-tools openssh-server openssh-clients passwdqc crac
 systemctl enable sshd
 systemctl start sshd
 
-useradd -b /specialusers/ ansibleuser
+useradd -b /specialusers ansibleuser
 passwd_value="PUT_A_PASSWORD_HERE"
 echo ansibleuser:$passwd_value | chpasswd
 echo "ansibleuser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ansible

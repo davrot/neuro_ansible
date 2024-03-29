@@ -1,29 +1,10 @@
 ---
-- name: install docker as servie
+- name: install docker as systemd plus add a portainer agent
   hosts: all
   become: true
 
   tasks:
 
     - name: remove other files
-      include_tasks: yaml_sub/myrepo_clean.yaml
-
-    - name: update file myrepo.repo
-      import_tasks: yaml_sub/myrepo_data.yaml
-
-    - name: install docker rpm
-      dnf:
-        name: "docker-ce,docker-ce-cli,docker-ce-rootless-extras,docker-buildx-plugin,docker-compose-plugin,python3,python3-pip,python3-requests"
-        state: latest
-        update_cache: true
-        skip_broken: true
-        nobest: false
-        allowerasing: true
-        enablerepo: "docker-ce-stable"
-
-    - name: make sure docker service unit is started
-      systemd_service:
-       state: started
-       name: docker
-       enabled: true
+      include_tasks: yaml_sub/install_docker.yaml
 

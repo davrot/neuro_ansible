@@ -1,0 +1,42 @@
+---
+- name: install ansible semaphore
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: remove other files
+      include_tasks: yaml_sub/install_docker.yaml
+
+    - name: Create volume semaphore_etc
+      community.docker.docker_volume:
+        name: semaphore_etc
+        state: present
+
+    - name: Create volume semaphore_lib
+      community.docker.docker_volume:
+        name: semaphore_lib
+        state: present
+
+    - name: Create portainer container
+      community.docker.docker_container:
+        name: semaphore
+        image: semaphoreui/semaphore
+        state: started
+        recreate: yes
+        restart_policy: always
+        published_ports:
+          - "3000:3000/tcp"
+        volumes:
+#          - /var/run/docker.sock:/var/run/docker.sock
+          - semaphore_etc:/etc/semaphore
+          - semaphore_lib:/var/lib/semaphore
+        env:
+          SEMAPHORE_DB_DIALECT: bolt
+          SEMAPHORE_ADMIN_PASSWORD: changeme
+          SEMAPHORE_ADMIN_NAME: admin
+          SEMAPHORE_ADMIN_EMAIL: davrot@uni-bremen.de
+          SEMAPHORE_ADMIN: admin
+          TZ: Europe/Berlin
+
+
