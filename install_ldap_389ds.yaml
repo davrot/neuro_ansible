@@ -1,0 +1,57 @@
+---
+- name: install ldap
+  hosts: all
+  become: true
+
+  tasks:
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install sssd
+      dnf:
+        name: "sssd,sssd-client"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: install 389
+      dnf:
+        name: "389-ds-base,cockpit-389-ds"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: set instance.inf
+      blockinfile:
+        path: /root/instance.inf
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0666"
+        block: |
+          [general]
+          full_machine_name = ldap.neuro.uni-bremen.de
+          start = True
+          
+          [slapd]
+          instance_name = localhost
+          root_password = SOMEPASSWORD
+          port = 389
+          secure_port = 636
+          self_sign_cert = True
+          
+          [backend-userroot]
+          sample_entries = yes
+          suffix = dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+
+
+# dscreate from-file instance.inf
+# systemctl status dirsrv@localhost.service
+# ldapsearch -x -H ldap://10.10.0.4 -s base -b "" "objectclass=*"
