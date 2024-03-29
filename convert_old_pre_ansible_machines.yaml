@@ -1,0 +1,47 @@
+---
+- name: update exisiting cluster computer to ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Make sure systemd-oomd service unit is stopped
+      systemd_service:
+       state: stopped
+       name: systemd-oomd
+
+    - name: mount_info
+      include_tasks: yaml_sub/mount_info.yaml
+
+    - name: remove of sge-root line
+      lineinfile:
+        path: /etc/fstab
+        create: no
+        state: absent
+        line: "10.10.10.16:/sge-root /sge-root nfs"
+
+    - name: sssd
+      include_tasks: yaml_sub/sssd.yaml
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: fix old broken intel packages
+      include_tasks: yaml_sub/fix_intel.yaml
+
+    - name: update system (all repo)
+      dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        enablerepo: "*"
+
+    - name: Make sure systemd-oomd service unit is started
+      systemd_service:
+       state: started
+       name: systemd-oomd
+
