@@ -1,0 +1,19 @@
+---
+- name: remove broken packages (step 0)
+  shell: "cd /root; export LC_ALL=C; rpm -qa >/dev/null 2> error.log"
+
+- name: remove broken packages (step 1)
+  shell: 'cd /root; cat error.log | grep "error: rpmdbNextIterator: skipping h\#" > error2.log'
+
+- name: remove broken packages (step 2)
+  shell: "cd /root; cat error2.log | awk -c '{print \"rpm -e --nosignature --nodeps $(rpm -q --nosignature --querybynumber \" $5 \")\"}' | sort -u | sh"
+
+- name: reinstall intel packages
+  dnf:
+    name: "intel-aikit,intel-basekit,intel-dlfdkit,intel-hpckit,intel-iotkit"
+    state: latest
+    update_cache: true
+    skip_broken: true
+    nobest: false
+    allowerasing: true
+

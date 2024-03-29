@@ -1,0 +1,58 @@
+---
+- name: Mount /home
+  mount:
+    src: 10.10.1.21:/volume1/home_dir
+    path: /home
+    opts: rw,sync,hard,nolock
+    boot: true 
+    state: mounted
+    fstype: nfs
+- name: Mount /glocal
+  mount:
+    src: 10.10.1.1:/volume1/glocal
+    path: /glocal
+    opts: rw,sync,hard,nolock
+    boot: true
+    state: mounted
+    fstype: nfs
+- name: Mount /tools
+  mount:
+    src: 10.10.1.1:/volume1/tools
+    path: /tools
+    opts: rw,sync,hard,nolock
+    boot: true
+    state: mounted
+    fstype: nfs
+- name: Mount /0
+  mount:
+    src: 10.10.1.1:/volume1/data
+    path: /0
+    opts: rw,sync,hard,nolock
+    boot: true
+    state: mounted
+    fstype: nfs
+- name: Mount /sge-root
+  mount:
+    src: 10.10.10.16:/sge-root
+    path: /sge-root
+    opts: rw,sync,hard
+    boot: true
+    state: mounted
+    fstype: nfs
+- name: Mount /data_1
+  mount:
+    src: 10.10.1.31:/volume1/data
+    path: /data_1
+    opts: rw,sync,hard,nolock
+    boot: true
+    state: mounted
+    fstype: nfs
+- name: Mount /web
+  mount:
+    src: 10.10.1.1:/volume1/web
+    path: /web
+    opts: rw,sync,hard,nolock
+    boot: true
+    state: mounted
+    fstype: nfs
+

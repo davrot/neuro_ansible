@@ -1,0 +1,12 @@
+package1names:
+  - chkconfig
+  - firefox
+  - gdm
+  - gnome-calculator
+  - gnome-terminal
+  - kdm
+  - lightdm
+  - lxdm
+  - okular
+  - sddm
+  - xdm

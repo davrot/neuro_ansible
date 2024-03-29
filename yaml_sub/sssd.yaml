@@ -1,0 +1,48 @@
+---
+- name: Check for marker line
+  lineinfile:
+    path: /etc/sssd/sssd.conf
+    create: true
+    state: present
+    line: "# BEGIN ANSIBLE MANAGED BLOCK"
+  register: marker_check
+
+- name: Delete file if marker is absent
+  file:
+    path: /etc/sssd/sssd.conf
+    state: absent
+  when: marker_check.changed
+
+- name: sssd config
+  blockinfile:
+    path: /etc/sssd/sssd.conf
+    state: present
+    create: true
+    owner: "root"
+    group: "root"
+    mode: "0600"
+    block: |
+      [sssd]
+      domains = default
+      services = nss,pam,ssh
+      
+      [domain/default]
+      id_provider = ldap
+      ldap_uri = ldap://10.10.1.31
+      ldap_search_base = dc=nas1,dc=neuro,dc=itp
+      ldap_auth_disable_tls_never_use_in_production = true
+      ldap_id_use_start_tls = False
+  register: marker_check
+
+- name: enable sssd
+  shell: "/usr/bin/authselect select sssd --force"
+  when: marker_check.changed
+
+- name: Make sure sssd is updated
+  systemd_service:
+    daemon_reload: true
+    state: restarted
+    enabled: true
+    name: sssd
+  when: marker_check.changed
+

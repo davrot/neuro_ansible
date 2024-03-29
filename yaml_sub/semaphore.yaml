@@ -1,0 +1,55 @@
+---
+- name: create docker compose files
+  blockinfile:
+    path: /root/docker-compose.yml
+    state: present
+    create: true
+    owner: "root"
+    group: "root"
+    mode: "0600"
+    block: |
+     services:
+       mysql:
+         restart: unless-stopped
+         image: mysql:8.0
+         hostname: mysql
+         volumes:
+           - semaphore-mysql:/var/lib/mysql
+         environment:
+           MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+           MYSQL_DATABASE: semaphore
+           MYSQL_USER: semaphore
+           MYSQL_PASSWORD: semaphore
+       semaphore:
+         restart: unless-stopped
+         ports:
+           - 3000:3000
+         image: semaphoreui/semaphore:latest
+         environment:
+           SEMAPHORE_DB_USER: semaphore
+           # change:
+           SEMAPHORE_DB_PASS: semaphore
+           SEMAPHORE_DB_HOST: mysql 
+           SEMAPHORE_DB_PORT: 3306 
+           SEMAPHORE_DB_DIALECT: mysql
+           SEMAPHORE_DB: semaphore
+           SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
+           # change:
+           SEMAPHORE_ADMIN_PASSWORD: changeme
+           SEMAPHORE_ADMIN_NAME: admin
+           SEMAPHORE_ADMIN_EMAIL: davrot@uni-bremen.de
+           SEMAPHORE_ADMIN: admin
+           # change: head -c32 /dev/urandom | base64
+           SEMAPHORE_ACCESS_KEY_ENCRYPTION: gs72mPntFATGJs9qK0pQ0rKtfidlexiMjYCH9gWKhTU=
+           SEMAPHORE_LDAP_ACTIVATED: 'no' # if you wish to use ldap, set to: 'yes' 
+           SEMAPHORE_LDAP_HOST: 10.10.0.4
+           SEMAPHORE_LDAP_PORT: '636'
+           SEMAPHORE_LDAP_NEEDTLS: 'yes'
+           SEMAPHORE_LDAP_DN_BIND: 'uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net'
+           SEMAPHORE_LDAP_PASSWORD: 'ldap_bind_account_password'
+           SEMAPHORE_LDAP_DN_SEARCH: 'dc=local,dc=example,dc=com'
+           SEMAPHORE_LDAP_SEARCH_FILTER: "(\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))"
+         depends_on:
+           - mysql
+     volumes:
+       semaphore-mysql:
