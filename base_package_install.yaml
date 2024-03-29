@@ -1,0 +1,114 @@
+---
+- name: install our repos
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: update system (base)
+      dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: Load group list
+      include_vars:
+        file: yaml_sub/groups_39.yaml
+    - name: Install groups
+      dnf:
+        name: "{{ groupnames }}"
+        disablerepo: RPMFusionNonFreeUpdate,RPMFusionFreeUpdate,RPMFusionFreeEverything,RPMFusionNonFreeEverything
+        update_cache: true
+        state: present
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        exclude: ghdl,sddm-x11
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: Load package 1 list
+      include_vars:
+        file: yaml_sub/packages_1.yaml
+    - name: Install package 1
+      dnf:
+        name: "{{ package1names }}"
+        disablerepo: RPMFusionNonFreeUpdate,RPMFusionFreeUpdate,RPMFusionFreeEverything,RPMFusionNonFreeEverything
+        update_cache: true
+        state: present
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: Load package 2 list
+      include_vars:
+        file: yaml_sub/packages_2.yaml
+    - name: Install package 2
+      dnf:
+        name: "{{ package2names }}"
+        disablerepo: RPMFusionNonFreeUpdate,RPMFusionFreeUpdate,RPMFusionFreeEverything,RPMFusionNonFreeEverything
+        update_cache: true
+        state: present
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: Load package 3 list
+      include_vars:
+        file: yaml_sub/packages_3.yaml
+    - name: Install package 3
+      dnf:
+        name: "{{ package3names }}"
+        disablerepo: RPMFusionNonFreeUpdate,RPMFusionFreeUpdate,RPMFusionFreeEverything,RPMFusionNonFreeEverything
+        update_cache: true
+        state: present
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: Install cuda
+      dnf:
+        name: cuda
+        enablerepo: "*"
+        update_cache: true
+        state: present
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
