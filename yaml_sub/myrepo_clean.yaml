@@ -1,18 +1,19 @@
 ---
 - name: Find files everything except myrepo.repo
-  find:
+  ansible.builtin.find:
     paths: /etc/yum.repos.d
     file_type: file
     excludes: "myrepo.repo"
   register: output
+  
 - name: Delete other files
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
   loop: "{{ output.files }}"
 
 - name: Check for marker line
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/yum.repos.d/myrepo.repo
     create: true
     state: present
@@ -20,7 +21,7 @@
   register: marker_check
 
 - name: Delete file if marker is absent
-  file:
+  ansible.builtin.file:
     path: /etc/yum.repos.d/myrepo.repo
     state: absent
   when: marker_check.changed
