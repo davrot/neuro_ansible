@@ -5,7 +5,11 @@
 
   tasks:
     - name: remove other files
+      include_tasks: yaml_sub/install_docker.yaml
+
+    - name: remove other files
       include_tasks: yaml_sub/myrepo_clean.yaml
+
     - name: update file myrepo.repo
       import_tasks: yaml_sub/myrepo_data.yaml
 
@@ -20,12 +24,48 @@
 
     - name: install 389
       dnf:
-        name: "389-ds-base,cockpit-389-ds"
+        name: "389-ds-base"
         state: latest
         update_cache: true
         skip_broken: true
         nobest: false
         allowerasing: true
+
+    - name: Create volume lam_etc
+      community.docker.docker_volume:
+        name: lam_etc
+        state: present
+
+    - name: Create lam container
+      community.docker.docker_container:
+        name: semaphore
+        image: ldapaccountmanager/lam
+        state: started
+        recreate: yes
+        restart_policy: always
+        published_ports:
+          - "80:80/tcp"
+        volumes:
+          - lam_etc:/var/lib/ldap-account-manager/config
+        env:
+	  LAM_SKIP_PRECONFIGURE: false
+	  LDAP_DOMAIN: ldap.neuro.uni-bremen.de
+	  LDAP_BASE_DN: dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+	  LDAP_USERS_DN: ou=people,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+	  LDAP_GROUPS_DN: ou=groups,dc=my-domain,dc=com
+	  LDAP_SERVER: ldap://10.10.0.4:389
+# xxxxxx
+	  LDAP_USER: cn=admin,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+# xxxxxx
+	  LAM_PASSWORD: lam
+	  LAM_CONFIGURATION_DATABASE: files
+	  LAM_DISABLE_TLS_CHECK: false
+	  LDAP_ORGANISATION: "Neuro-Physik ITP"
+# xxxxxx
+	  LDAP_ADMIN_PASSWORD: adminpw
+# xxxxxx
+	  LDAP_READONLY_USER_PASSWORD: readonlypw
+
 
     - name: set instance.inf
       blockinfile:
@@ -42,6 +82,7 @@
           
           [slapd]
           instance_name = localhost
+# xxxxxx
           root_password = SOMEPASSWORD
           port = 389
           secure_port = 636

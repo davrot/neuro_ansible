@@ -18,7 +18,7 @@
         name: semaphore_lib
         state: present
 
-    - name: Create portainer container
+    - name: Create semaphore container
       community.docker.docker_container:
         name: semaphore
         image: semaphoreui/semaphore
@@ -28,7 +28,6 @@
         published_ports:
           - "3000:3000/tcp"
         volumes:
-#          - /var/run/docker.sock:/var/run/docker.sock
           - semaphore_etc:/etc/semaphore
           - semaphore_lib:/var/lib/semaphore
         env:
