@@ -12,11 +12,30 @@
 
     - name: install movie tools
       dnf:
-        name: mencoder mmv mplayer HandBrake
+        name: mencoder,mmv,mplayer,HandBrake
         state: present
         update_cache: true
         skip_broken: true
         nobest: false
         allowerasing: true
 
+    - name: make sure gdm is stopped
+      ansible.builtin.systemd_service:
+        name: gdm
+        state: stopped
+        enabled: false
 
+    - name: make sure lxdm is started
+      ansible.builtin.systemd_service:
+        name: lxdm
+        state: started
+        enabled: true
+
+    - name: Change default target to graphical.target
+      file:
+        src: /usr/lib/systemd/system/graphical.target
+        dest: /etc/systemd/system/default.target
+        state: link
+
+    - name: disable tracker 
+      shell: 'for f in /etc/xdg/autostart/tracker*.desktop; do echo "Hidden=true" | tee -a "$f"; done'

@@ -3,7 +3,18 @@
   hosts: all
   become: true
 
+  vars:
+    lam_pwd: "{{ env_lam_pw }}"
+    ldap_pwd: "{{ env_ldap_pw }}"
+    ldap_ro_pwd: "{{ env_ldap_ro_pw}}"
+    sqlpwd: "{{ env_sql_pw}}"
+    sqlrootpwd: "{{ env_root_sql_pw}}"
+
   tasks:
+    - name: Create network AuthentikNet
+      community.docker.docker_network:
+        name: LDAPNet
+
     - name: remove other files
       include_tasks: yaml_sub/install_docker.yaml
 
@@ -31,6 +42,31 @@
         nobest: false
         allowerasing: true
 
+    - name: Create volume ldap_maria_db
+      community.docker.docker_volume:
+        name: ldap_maria_db
+        state: present
+
+    - name: Create mariab container
+      community.docker.docker_container:
+        name: ldapmariadb
+        image: mariadb
+        state: started
+        recreate: no
+        restart_policy: always
+        env:
+          MARIADB_DATABASE: "ldap"
+          MARIADB_USER: "ldap"
+          MARIADB_PASSWORD: "{{ sqlpwd }}"
+          MARIADB_ROOT_PASSWORD : "{{ sqlrootpwd }}"
+          MYSQL_ROOT_HOST: '%'
+        networks:
+          - name: LDAPNet
+        comparisons:
+          networks: strict
+        volumes:
+          - "ldap_maria_db:/var/lib/mysql"
+
     - name: Create volume lam_etc
       community.docker.docker_volume:
         name: lam_etc
@@ -38,33 +74,41 @@
 
     - name: Create lam container
       community.docker.docker_container:
-        name: semaphore
+        name: ldaplam
         image: ldapaccountmanager/lam
         state: started
-        recreate: yes
+        recreate: no
         restart_policy: always
         published_ports:
           - "80:80/tcp"
         volumes:
-          - lam_etc:/var/lib/ldap-account-manager/config
+          - "lam_etc:/var/lib/ldap-account-manager/config"
         env:
-	  LAM_SKIP_PRECONFIGURE: false
-	  LDAP_DOMAIN: ldap.neuro.uni-bremen.de
-	  LDAP_BASE_DN: dc=ldap,dc=neuro,dc=uni-bremen,dc=de
-	  LDAP_USERS_DN: ou=people,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
-	  LDAP_GROUPS_DN: ou=groups,dc=my-domain,dc=com
-	  LDAP_SERVER: ldap://10.10.0.4:389
-# xxxxxx
-	  LDAP_USER: cn=admin,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
-# xxxxxx
-	  LAM_PASSWORD: lam
-	  LAM_CONFIGURATION_DATABASE: files
-	  LAM_DISABLE_TLS_CHECK: false
-	  LDAP_ORGANISATION: "Neuro-Physik ITP"
-# xxxxxx
-	  LDAP_ADMIN_PASSWORD: adminpw
-# xxxxxx
-	  LDAP_READONLY_USER_PASSWORD: readonlypw
+          LAM_SKIP_PRECONFIGURE: "false"
+          LDAP_DOMAIN: "ldap.neuro.uni-bremen.de"
+          LDAP_BASE_DN: "dc=ldap,dc=neuro,dc=uni-bremen,dc=de"
+          LDAP_USERS_DN: "ou=people,dc=ldap,dc=neuro,dc=uni-bremen,dc=de"
+          LDAP_GROUPS_DN: "ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de"
+          LDAP_SERVER: "ldap://ldap.neuro.uni-bremen.de:389"
+          LDAP_USER: "cn=admin,dc=ldap,dc=neuro,dc=uni-bremen,dc=de"
+          LAM_LANG: "en_US"
+          LAM_PASSWORD: "{{ lam_pwd }}"
+          LAM_CONFIGURATION_DATABASE: "mysql"
+          LAM_CONFIGURATION_HOST: "ldapmariadb"
+          LAM_CONFIGURATION_PORT: "3306"
+          LAM_CONFIGURATION_USER: "ldap"
+          LAM_CONFIGURATION_PASSWORD: "{{ sqlpwd }}"
+          LAM_CONFIGURATION_DATABASE_NAME: "ldap"
+          LAM_DISABLE_TLS_CHECK: "false"
+          LDAP_ORGANISATION: "Neuro-Physik ITP"
+          LDAP_ADMIN_PASSWORD: "{{ ldap_pwd }}"
+          LDAP_READONLY_USER_PASSWORD: "{{ ldap_ro_pwd }}"
+
+        networks:
+          - name: LDAPNet
+          - name: bridge
+        comparisons:
+          networks: strict
 
 
     - name: set instance.inf
@@ -79,11 +123,12 @@
           [general]
           full_machine_name = ldap.neuro.uni-bremen.de
           start = True
+          strict_host_checking = False
           
           [slapd]
           instance_name = localhost
-# xxxxxx
-          root_password = SOMEPASSWORD
+          root_dn = cn=admin
+          root_password = {{ ldap_pwd }}
           port = 389
           secure_port = 636
           self_sign_cert = True
@@ -92,7 +137,6 @@
           sample_entries = yes
           suffix = dc=ldap,dc=neuro,dc=uni-bremen,dc=de
 
+cd /root ; dscreate from-file instance.inf
 
-# dscreate from-file instance.inf
-# systemctl status dirsrv@localhost.service
-# ldapsearch -x -H ldap://10.10.0.4 -s base -b "" "objectclass=*"
+# ldapsearch -x -H ldap://ldap.neuro.uni-bremen.de -s base -b "" "objectclass=*"
