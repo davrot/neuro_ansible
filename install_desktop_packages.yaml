@@ -4,6 +4,8 @@
   become: true
 
   tasks:
+    - name: Install base system
+      include_tasks: yaml_sub/install_base_system.yaml
 
     - name: remove other files
       include_tasks: yaml_sub/myrepo_clean.yaml

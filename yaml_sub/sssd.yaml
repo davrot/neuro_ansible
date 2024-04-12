@@ -28,10 +28,21 @@
       
       [domain/default]
       id_provider = ldap
-      ldap_uri = ldap://10.10.1.31
-      ldap_search_base = dc=nas1,dc=neuro,dc=itp
-      ldap_auth_disable_tls_never_use_in_production = true
-      ldap_id_use_start_tls = False
+      ldap_uri = ldaps://ldap.neuro.uni-bremen.de:636
+      ldap_search_base = dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+      
+      ldap_user_name = uid
+      ldap_user_uid_number = uidNumber
+      ldap_user_gid_number = gidNumber
+      ldap_user_home_directory = homeDirectory
+      loginShell = loginShell
+      ldap_user_fullname = cn
+      ldap_user_object_class = posixAccount
+      ldap_default_authtok_type = password
+      ldap_tls_reqcert = never
+      
+      # ldap_auth_disable_tls_never_use_in_production = true
+      # ldap_id_use_start_tls = False
   register: marker_check
 
 - name: enable sssd

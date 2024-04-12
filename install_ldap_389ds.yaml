@@ -137,6 +137,6 @@
           sample_entries = yes
           suffix = dc=ldap,dc=neuro,dc=uni-bremen,dc=de
 
-# cd /root ; dscreate from-file instance.inf
+cd /root ; dscreate from-file instance.inf
 
 # ldapsearch -x -H ldap://ldap.neuro.uni-bremen.de -s base -b "" "objectclass=*"

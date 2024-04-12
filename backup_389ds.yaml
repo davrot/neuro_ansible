@@ -1,0 +1,54 @@
+---
+- name: backup 389ds volume
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: make remove old folder
+      ansible.builtin.file:
+        path: "/var/lib/dirsrv/slapd-localhost/bak"
+        state: "absent"
+
+    - name: make make new folder
+      ansible.builtin.file:
+        path: "/var/lib/dirsrv/slapd-localhost/bak"
+        state: "directory"
+        owner: "dirsrv"
+        group: "dirsrv"
+        mode: '0770'
+
+    - name: make backup folder
+      ansible.builtin.file:
+        path: "/389ds_backup/"
+        owner: "ansibleuser"
+        group: "ansibleuser"
+        mode: '0700'
+        state: "directory"
+
+    - name: backup 389ds database
+      shell: "dsconf localhost backup create"
+
+    - name: delete old file
+      ansible.builtin.file:
+        path: "/389ds_backup/389ds_db_{{ ansible_hostname }}.tgz"
+        state: "absent"
+
+    - name: create archive
+      community.general.archive:
+        dest: "/389ds_backup/389ds_db_{{ ansible_hostname }}.tgz"
+        path: "/var/lib/dirsrv/slapd-localhost/bak"
+        owner: "ansibleuser"
+
+    - name: create sudo permision 
+      lineinfile:
+        path: "/etc/sudoers.d/root"
+        create: true
+        state: present
+        line: "root ALL=(ansibleuser) NOPASSWD: ALL"
+
+    - name: scp file into safety
+      ansible.builtin.shell: 'scp -o "StrictHostKeyChecking accept-new" /389ds_backup/389ds_db_{{ ansible_hostname }}.tgz ansibleuser@10.10.0.2:/home/backup_ansible/'
+      become: false
+
