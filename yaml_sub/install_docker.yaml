@@ -26,7 +26,7 @@
     name: portaineragent
     image: portainer/agent:2.19.4
     state: started
-    recreate: yes
+    recreate: no
     restart_policy: always
     published_ports:
       - "9001:9001/tcp"
