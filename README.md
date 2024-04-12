@@ -17,10 +17,12 @@ echo "ansibleuser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ansible
 
 ## Beware of SELinux
 
+```
 cat /etc/selinux/config | sed s/"$SELINUX=enforcing"/"SELINUX=disabled"/g > /etc/selinux/config_xxx
 \cp /etc/selinux/config_xxx /etc/selinux/config
 \rm /etc/selinux/config_xxx
 reboot
+```
 
 # How to make the server ready
 
