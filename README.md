@@ -36,7 +36,9 @@ ssh-keygen
 And then for every computer:
 
 ```
+ip="computername"
 passwd_value="PUT_A_PASSWORD_HERE"
-sshpass -p "$passwd_value" ssh-copy-id -o "StrictHostKeyChecking accept-new" ansibleuser@COMPUTERNAME
+sshpass -p "$passwd_value" ssh-copy-id -o "StrictHostKeyChecking accept-new" ansibleuser@$ip
+scp ~/.ssh/id* ansibleuser@$ip:~/.ssh
 ```
 
