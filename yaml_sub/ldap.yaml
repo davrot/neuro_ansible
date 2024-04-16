@@ -1,0 +1,41 @@
+---
+
+- name: remove other files
+  include_tasks: yaml_sub/myrepo_clean.yaml
+- name: update file myrepo.repo
+  import_tasks: yaml_sub/myrepo_data.yaml
+
+- name: install openldap
+  dnf:
+    name: nss-pam-ldapd,openldap,openldap-clients
+    state: present
+    update_cache: true
+    skip_broken: true
+    nobest: false
+    allowerasing: true
+
+- name: Remove old entry (URI)
+  ansible.builtin.lineinfile:
+    path: /etc/openldap/ldap.conf
+    state: absent
+    line: "URI ldap://10.10.1.31"
+
+- name: Remove old entry (BASE)
+  ansible.builtin.lineinfile:
+    path: /etc/openldap/ldap.conf
+    state: absent
+    line: "BASE dc=nas1,dc=neuro,dc=itp"
+    
+
+- name: set LDAP
+  blockinfile:
+    path: /etc/openldap/ldap.conf
+    state: present
+    create: true
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    block: |
+      URI ldaps://ldap.neuro.uni-bremen.de:636
+      BASE dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+      TLS_REQCERT never

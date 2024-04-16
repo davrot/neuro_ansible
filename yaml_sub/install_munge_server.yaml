@@ -1,0 +1,67 @@
+---
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: export munge user
+      shell: "export MUNGEUSER=10001"
+
+    - name: install slurm
+      dnf:
+        name: munge
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: save munge key 
+      ansible.builtin.copy:
+        src: "../munge.key"
+        dest: "/etc/munge/munge.key"
+        owner: "munge"
+        group: "munge"
+        mode: 0400
+
+    - name: deal with directories /etc/munge
+      ansible.builtin.file:
+        path: "/etc/munge"
+        owner: "munge"
+        group: "munge"
+        mode: 0700
+        state: "directory"
+
+    - name: deal with directories /var/log/munge/ 
+      ansible.builtin.file:
+        path: "/var/log/munge"
+        owner: "munge"
+        group: "munge"
+        mode: 0700
+        state: "directory"
+
+    - name: Make sure munge is running
+      systemd_service:
+        daemon_reload: true
+        state: started
+        enabled: true
+        name: munge
+
+    - name: Set number of munge threads
+      lineinfile:
+        path: "/etc/systemd/system/multi-user.target.wants/munge.service"
+        regexp: "^ExecStart=/usr/sbin/munged"
+        line: "ExecStart=/usr/sbin/munged --num-threads 10"
+        create: true
+
+    - name: Make sure munge is restarted
+      systemd_service:
+        daemon_reload: true
+        state: restarted
+        enabled: true
+        name: munge
+
+
+      
+    
+        

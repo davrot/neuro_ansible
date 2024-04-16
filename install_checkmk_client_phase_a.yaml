@@ -1,0 +1,23 @@
+---
+- name: install check client 
+  hosts: all
+  become: true
+
+
+  tasks:
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true

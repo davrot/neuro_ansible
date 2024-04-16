@@ -1,0 +1,61 @@
+---
+- name: install gitlab
+  hosts: all
+  become: true
+  
+  tasks:
+
+
+    - name: Create network GitLabNet
+      community.docker.docker_network:
+        name: GitLabNet
+
+
+
+
+#    - name: install docker 
+#      ansible.builtin.include_tasks: yaml_sub/install_docker.yaml
+
+    - name: Create a volume
+      community.docker.docker_volume:
+        name: gitlab_opt
+        state: present
+
+    - name: Create a volume
+      community.docker.docker_volume:
+        name: gitlab_etc
+        state: present
+
+    - name: Create a volume
+      community.docker.docker_volume:
+        name: gitlab_log
+        state: present
+
+
+#    - name: Create gitlab container
+#      community.docker.docker_container:
+#        name: gitlab
+#        image: gitlab/gitlab-ce
+#        state: started
+#        recreate: no
+# GITLAB_ROOT_PASSWORD
+## hostname: 'gitlab.example.com'
+#      GITLAB_OMNIBUS_CONFIG: |
+#        # Add any other gitlab.rb configuration here, each on its own line
+#        external_url 'https://gitlab.example.com'
+#        restart_policy: always
+##        published_ports:
+##          - "443:443/tcp" 
+##          - "80:80/tcp" 
+##          - "22:22/tcp"
+#        volumes:
+#          - "gitlab_opt:/var/opt/gitlab"
+#          - "gitlab_etc:/etc/gitlab"
+#          - "gitlab_log:/var/log/gitlab"
+##          - /var/run/docker.sock:/var/run/docker.sock
+#        networks:
+#          - name: OverleafNet
+#          - name: bridge
+#        comparisons:
+#          networks: strict
+# shm_size: '256m'

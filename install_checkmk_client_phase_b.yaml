@@ -1,0 +1,9 @@
+---
+- name: register check client 
+  hosts: all
+  become: true
+
+  tasks:
+    - name: register check client
+      shell: "myhostname=`hostname` ; cmk-agent-ctl register --server 10.10.0.3:8000 --site cmk --user automation --trust-cert --password '{{ password }}' --hostname $myhostname"
+

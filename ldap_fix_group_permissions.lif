@@ -1,0 +1,38 @@
+# ldapmodify -x -W -D "cn=admin" -f temp.lif
+# ldapsearch -x -W -D "cn=admin" -b "dc=ldap,dc=neuro,dc=uni-bremen,dc=de" -LLL -s sub '(aci=*)' aci
+
+dn: ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+changetype: modify
+delete: aci
+aci: (targetattr="cn || member || memberUid || gidNumber || nsUniqueId || description || objectClass")(targetfilter="(objectClass=groupOfNames)")(version 3.0; acl "Enable anyone group read"; allow (read, search, compare)(userdn="ldap:///anyone");)
+
+dn: ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+changetype: modify
+delete: aci
+aci: (targetattr="member")(targetfilter="(objectClass=groupOfNames)")(version 3.0; acl "Enable group_modify to alter members"; allow (write)(groupdn="ldap:///cn=group_modify,ou=permissions,dc=ldap,dc=neuro,dc=uni-bremen,dc=de");)
+
+dn: ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+changetype: modify
+delete: aci
+aci: (targetattr="cn || member || gidNumber || description || objectClass")(targetfilter="(objectClass=groupOfNames)")(version 3.0; acl "Enable group_admin to manage groups"; allow (write, add, delete)(groupdn="ldap:///cn=group_admin,ou=permissions,dc=ldap,dc=neuro,dc=uni-bremen,dc=de");)
+
+
+
+dn: ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+changetype: modify
+add: aci
+aci: (targetattr="cn || member || memberUid || gidNumber || nsUniqueId || description || objectClass")(targetfilter="(objectClass=posixGroup)")(version 3.0; acl "Enable anyone group read"; allow (read, search, compare)(userdn="ldap:///anyone");)
+
+dn: ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+changetype: modify
+add: aci
+aci: (targetattr="member")(targetfilter="(objectClass=posixGroup)")(version 3.0; acl "Enable group_modify to alter members"; allow (write)(groupdn="ldap:///cn=group_modify,ou=permissions,dc=ldap,dc=neuro,dc=uni-bremen,dc=de");)
+
+dn: ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+changetype: modify
+add: aci
+aci: (targetattr="cn || member || gidNumber || description || objectClass")(targetfilter="(objectClass=posixGroup)")(version 3.0; acl "Enable group_admin to manage groups"; allow (write, add, delete)(groupdn="ldap:///cn=group_admin,ou=permissions,dc=ldap,dc=neuro,dc=uni-bremen,dc=de");)
+
+
+
+

@@ -1,4 +1,24 @@
 ---
+- name: remove other files
+  include_tasks: yaml_sub/myrepo_clean.yaml
+- name: update file myrepo.repo
+  import_tasks: yaml_sub/myrepo_data.yaml
+
+- name: install nfs tools
+  dnf:
+    name: nfs-utils,nfs-utils-coreos,nfsv4-client-utils,rpcbind
+    state: present
+    update_cache: true
+    skip_broken: true
+    nobest: false
+    allowerasing: true
+        
+- name: Make sure rpcbind service unit is started
+  systemd_service:
+    enabled: true
+    state: started
+    name: rpcbind
+
 - name: Mount /home
   ansible.posix.mount:
     src: 10.10.1.21:/volume1/home_dir
@@ -7,6 +27,7 @@
     boot: true 
     state: mounted
     fstype: nfs
+
 - name: Mount /glocal
   ansible.posix.mount:
     src: 10.10.1.1:/volume1/glocal
@@ -15,6 +36,7 @@
     boot: true
     state: mounted
     fstype: nfs
+
 - name: Mount /tools
   ansible.posix.mount:
     src: 10.10.1.1:/volume1/tools
@@ -23,6 +45,7 @@
     boot: true
     state: mounted
     fstype: nfs
+
 - name: Mount /0
   ansible.posix.mount:
     src: 10.10.1.1:/volume1/data
@@ -31,6 +54,7 @@
     boot: true
     state: mounted
     fstype: nfs
+
 - name: Mount /sge-root
   ansible.posix.mount:
     src: 10.10.10.16:/sge-root
@@ -39,6 +63,7 @@
     boot: true
     state: mounted
     fstype: nfs
+
 - name: Mount /data_1
   ansible.posix.mount:
     src: 10.10.1.31:/volume1/data
@@ -47,6 +72,7 @@
     boot: true
     state: mounted
     fstype: nfs
+
 - name: Mount /web
   ansible.posix.mount:
     src: 10.10.1.1:/volume1/web

@@ -1,4 +1,19 @@
 ---
+
+- name: remove other files
+  include_tasks: yaml_sub/myrepo_clean.yaml
+- name: update file myrepo.repo
+  import_tasks: yaml_sub/myrepo_data.yaml
+
+- name: install sssd
+  dnf:
+    name: sssd,sssd-ldap,sssd-tools
+    state: present
+    update_cache: true
+    skip_broken: true
+    nobest: false
+    allowerasing: true
+
 - name: Check for marker line
   lineinfile:
     path: /etc/sssd/sssd.conf
@@ -28,21 +43,31 @@
       
       [domain/default]
       id_provider = ldap
+      auth_provider = ldap
+      chpass_provider = ldap
+      
       ldap_uri = ldaps://ldap.neuro.uni-bremen.de:636
       ldap_search_base = dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+      ldap_user_search_base = ou=people,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
+      ldap_group_search_base = ou=groups,dc=ldap,dc=neuro,dc=uni-bremen,dc=de
       
       ldap_user_name = uid
       ldap_user_uid_number = uidNumber
       ldap_user_gid_number = gidNumber
       ldap_user_home_directory = homeDirectory
-      loginShell = loginShell
+      ldap_user_shell = loginShell
       ldap_user_fullname = cn
       ldap_user_object_class = posixAccount
       ldap_default_authtok_type = password
       ldap_tls_reqcert = never
       
-      # ldap_auth_disable_tls_never_use_in_production = true
-      # ldap_id_use_start_tls = False
+      ldap_group_object_class = posixGroup
+      ldap_group_gid_number = gidNumber
+      ldap_group_member = memberUid
+      ldap_group_name = cn
+      ldap_group_nesting_level = 5
+      
+      
   register: marker_check
 
 - name: enable sssd

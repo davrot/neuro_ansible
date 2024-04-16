@@ -1,0 +1,132 @@
+---
+- name: install check
+  hosts: all
+  become: true
+
+  vars:
+
+  tasks:
+    - name: Create network CheckNet
+      community.docker.docker_network:
+        name: CheckNet
+
+    - name: remove other files
+      include_tasks: yaml_sub/install_docker.yaml
+
+    - name: mount dirs
+      include_tasks: yaml_sub/mount_info.yaml
+
+    - name: set ldap
+      include_tasks: yaml_sub/ldap.yaml
+
+    - name: set sssd
+      include_tasks: yaml_sub/sssd.yaml
+
+    - name: Create volume monitoring
+      community.docker.docker_volume:
+        name: monitoring
+        state: present
+
+    - name: Create checkmk
+      community.docker.docker_container:
+        name: checkmk
+        image: checkmk/check-mk-raw
+        state: started
+        recreate: no
+        restart_policy: always
+        published_ports:
+          - "80:5000/tcp"
+          - "8000:8000/tcp"
+        volumes:
+          - "monitoring:/omd/sites"
+          - "/etc/localtime:/etc/localtime:ro"
+        env:
+          MAIL_RELAY_HOST: "smtpd"
+          
+        networks:
+          - name: CheckNet
+          - name: bridge
+        comparisons:
+          networks: strict
+        hostname: "neuro.uni-bremen.de"
+
+    - name: set smtpd_pre.conf
+      blockinfile:
+        path: /root/opensmtpd/smtpd_pre.conf
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        block: |
+          listen on 0.0.0.0
+          listen on ::
+          
+          table aliases file:/etc/smtpd/aliases
+          
+          queue ttl 4d
+          bounce warn-interval 1h, 6h, 2d
+          smtp max-message-size 35M
+          
+          table authinfo db:/etc/smtpd/authinfo.db
+          action default relay host "smtps://user@mailhost.neurotec.uni-bremen.de:465" auth <authinfo> tls no-verify
+          match from any for any action default
+
+    - name: Create a volume smtpd_spool
+      community.docker.docker_volume:
+        name: smtpd_spool
+        state: present
+
+    - name: Create OpenSMTPd
+      community.docker.docker_container:
+        name: smtpd
+        image: wodby/opensmtpd
+        state: started
+        recreate: no
+        restart_policy: always
+        published_ports:
+          - "25:25/tcp"
+        env:
+          RELAY_HOST: "XXX"
+          RELAY_PROTO: "smtps"
+          RELAY_PORT: "XXX"
+          RELAY_USER: "{{ EMAIL__USERNAME }}"
+          RELAY_PASSWORD: "{{ EMAIL__PASSWORD }}"
+
+        volumes:
+          - "/root/opensmtpd/smtpd_pre.conf:/etc/gotpl/smtpd.conf.tmpl"
+          - "smtpd_spool:/var/spool/smtpd"
+
+        networks:
+          - name: CheckNet
+          - name: bridge
+        comparisons:
+          networks: strict
+
+
+    - name: install mailx
+      dnf:
+        name: "mailx,telnet,sendmail"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: esmtprc
+      blockinfile:
+        path: /etc/esmtprc
+        state: present
+        create: true
+        block: |
+          hostname = 127.0.0.1:25
+          mda "/usr/bin/procmail -d %T"
+
+
+
+# You will find the provisional password for the cmkadmin account in the logs that are written for this container
+# docker container logs monitoring
+# dnf install -y http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm
+# 
+# myhostname=`hostname`
+# cmk-agent-ctl register --server 10.10.0.3:8000 --site cmk --user automation --trust-cert --password 'UTUBJELBGMKMSHEHHOMC' --hostname $myhostname

@@ -1,0 +1,76 @@
+---
+- name: install slurm
+  hosts: all
+  become: true
+
+  vars:
+    sqlpwd: "{{ env_sql_pw}}"
+    sqlrootpwd: "{{ env_root_sql_pw}}"
+  
+  tasks:
+
+    - name: export munge user
+      shell: "export MUNGEUSER=10001"
+
+    - name: export export SlurmUSER
+      shell: "export export SlurmUSER=10000"
+    
+    - name: mount_info
+      include_tasks: yaml_sub/mount_info.yaml
+
+    - name: ldap
+      include_tasks: yaml_sub/ldap.yaml
+
+    - name: sssd
+      include_tasks: yaml_sub/sssd.yaml
+
+    - name: install docker 
+      ansible.builtin.include_tasks: yaml_sub/install_docker.yaml
+
+    - name: Create volume slurm_maria_db
+      community.docker.docker_volume:
+        name: slurm_maria_db
+        state: present
+
+    - name: Create mariab container
+      community.docker.docker_container:
+        name: slurmmariadb
+        image: mariadb
+        state: started
+        recreate: no
+        restart_policy: always
+        env:
+          MARIADB_DATABASE: "slurm"
+          MARIADB_USER: "slurm"
+          MARIADB_PASSWORD: "{{ sqlpwd }}"
+          MARIADB_ROOT_PASSWORD : "{{ sqlrootpwd }}"
+          MYSQL_ROOT_HOST: '%'
+        published_ports:
+          - "3306:3306/tcp" 
+        networks:
+          - name: bridge
+        comparisons:
+          networks: strict
+        volumes:
+          - "slurm_maria_db:/var/lib/mysql"
+
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+
+    - name: install slurm
+      dnf:
+        name: slurm,slurm-slurmctld,slurm-slurmdbd,slurm-slurmrestd,slurm-gui,munge,python3-mysql
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: install munge server
+      include_tasks: yaml_sub/install_munge_server.yaml
+
+

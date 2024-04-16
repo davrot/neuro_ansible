@@ -1,0 +1,11 @@
+---
+- name: update ldap setting
+  hosts: all
+  become: true
+
+  tasks:
+    - name: ldap
+      include_tasks: yaml_sub/ldap.yaml
+
+    - name: sssd
+      include_tasks: yaml_sub/sssd.yaml

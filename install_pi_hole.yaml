@@ -34,7 +34,7 @@
         name: pihole
         image: pihole/pihole
         state: started
-        recreate: yes
+        recreate: no
         restart_policy: always
         published_ports:
           - "53:53/tcp"
