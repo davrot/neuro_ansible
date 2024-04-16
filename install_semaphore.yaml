@@ -90,6 +90,78 @@
         volumes:
           - "semaphore_maria_db:/var/lib/mysql"
 
+    - name: set smtpd_pre.conf
+      blockinfile:
+        path: /root/opensmtpd/smtpd_pre.conf
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        block: |
+          listen on 0.0.0.0
+          listen on ::
+          
+          table aliases file:/etc/smtpd/aliases
+          
+          queue ttl 4d
+          bounce warn-interval 1h, 6h, 2d
+          smtp max-message-size 35M
+          
+          table authinfo db:/etc/smtpd/authinfo.db
+          action default relay host "smtps://user@mailhost.neurotec.uni-bremen.de:465" auth <authinfo> tls no-verify
+          match from any for any action default
+
+    - name: Create a volume smtpd_spool
+      community.docker.docker_volume:
+        name: smtpd_spool
+        state: present
+
+    - name: Create OpenSMTPd
+      community.docker.docker_container:
+        name: smtpd
+        image: wodby/opensmtpd
+        state: started
+        recreate: no
+        restart_policy: always
+        published_ports:
+          - "25:25/tcp"
+        env:
+          RELAY_HOST: "XXX"
+          RELAY_PROTO: "smtps"
+          RELAY_PORT: "XXX"
+          RELAY_USER: "{{ EMAIL__USERNAME }}"
+          RELAY_PASSWORD: "{{ EMAIL__PASSWORD }}"
+
+        volumes:
+          - "/root/opensmtpd/smtpd_pre.conf:/etc/gotpl/smtpd.conf.tmpl"
+          - "smtpd_spool:/var/spool/smtpd"
+
+        networks:
+          - name: semaphoreNet
+          - name: bridge
+        comparisons:
+          networks: strict
+
+    - name: install mailx
+      dnf:
+        name: "mailx,telnet,sendmail"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: esmtprc
+      blockinfile:
+        path: /etc/esmtprc
+        state: present
+        create: true
+        block: |
+          hostname = 127.0.0.1:25
+          mda "/usr/bin/procmail -d %T"
+
+
     - name: Create volume semaphore_etc
       community.docker.docker_volume:
         name: semaphore_etc
@@ -135,6 +207,8 @@
           SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ semakey }}"
           
           SEMAPHORE_LDAP_ACTIVATED: 'no'
+          
+          ANSIBLE_HOST_KEY_CHECKING: "False"
           
           TZ: "Europe/Berlin"
 

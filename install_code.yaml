@@ -1,0 +1,51 @@
+---
+- name: install ansible semaphore
+  hosts: all
+  become: true
+
+  tasks:
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/install_docker.yaml
+
+    - name: Create volume code data
+      community.docker.docker_volume:
+        name: code_data
+        state: present
+
+    - name: Create code container
+      community.docker.docker_container:
+        name: code-server
+        image: lscr.io/linuxserver/code-server:latest
+        state: started
+        recreate: yes
+        restart_policy: always
+
+        volumes:
+          - "code_data:/config"
+        published_ports:
+          - "80:8443/tcp"
+        env:
+          PASSWORD: "{{ passwd }}"
+          TZ: "Europe/Berlin"
+          PUID: "0"
+          PGID: "0"
+          DEFAULT_WORKSPACE: "/config/workspace"
+
+
+
