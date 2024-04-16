@@ -4,9 +4,91 @@
   become: true
 
   tasks:
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true
+
+    - name: ldap
+      include_tasks: yaml_sub/ldap.yaml
+
+    - name: sssd
+      include_tasks: yaml_sub/sssd.yaml
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install nfs tools
+      dnf:
+        name: nfs-utils,nfs-utils-coreos,nfsv4-client-utils,rpcbind
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: Make sure rpcbind service unit is started
+      systemd_service:
+        enabled: true
+        state: started
+        name: rpcbind
+
+    - name: mount_info
+      include_tasks: yaml_sub/mount_info.yaml
 
     - name: remove other files
       include_tasks: yaml_sub/install_docker.yaml
+
+    - name: install python3-request
+      dnf:
+        name: python3-requests+security
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: Create network semaphoreNet
+      community.docker.docker_network:
+        name: semaphoreNet
+
+    - name: Create volume semaphore_maria_db
+      community.docker.docker_volume:
+        name: semaphore_maria_db
+        state: present
+
+    - name: Create mariab container
+      community.docker.docker_container:
+        name: semaphoremariadb
+        image: mariadb
+        state: started
+        recreate: no
+        restart_policy: always
+        env:
+          MARIADB_DATABASE: "semaphore"
+          MARIADB_USER: "semaphore"
+          MARIADB_PASSWORD: "{{ sqlpwd }}"
+          MARIADB_ROOT_PASSWORD : "{{ sqlrootpwd }}"
+          MYSQL_ROOT_HOST: '%'
+        networks:
+          - name: semaphoreNet
+        comparisons:
+          networks: strict
+        volumes:
+          - "semaphore_maria_db:/var/lib/mysql"
 
     - name: Create volume semaphore_etc
       community.docker.docker_volume:
@@ -16,6 +98,11 @@
     - name: Create volume semaphore_lib
       community.docker.docker_volume:
         name: semaphore_lib
+        state: present
+
+    - name: Create volume semaphore_tmp
+      community.docker.docker_volume:
+        name: semaphore_tmp
         state: present
 
     - name: Create semaphore container
@@ -28,14 +115,33 @@
         published_ports:
           - "3000:3000/tcp"
         volumes:
-          - semaphore_etc:/etc/semaphore
-          - semaphore_lib:/var/lib/semaphore
+          - "semaphore_etc:/etc/semaphore"
+          - "semaphore_lib:/var/lib/semaphore"
+          - "semaphore_tmp:/tmp/semaphore/"
         env:
-          SEMAPHORE_DB_DIALECT: bolt
-          SEMAPHORE_ADMIN_PASSWORD: changeme
-          SEMAPHORE_ADMIN_NAME: admin
-          SEMAPHORE_ADMIN_EMAIL: davrot@uni-bremen.de
-          SEMAPHORE_ADMIN: admin
-          TZ: Europe/Berlin
+          SEMAPHORE_DB_USER: "semaphore"
+          SEMAPHORE_DB_PASS: "{{ sqlpwd }}"
+          SEMAPHORE_DB_HOST: "semaphoremariadb"
+          SEMAPHORE_DB_PORT: "3306"
+          SEMAPHORE_DB_DIALECT: "mysql"
+          SEMAPHORE_DB: "semaphore"
+          SEMAPHORE_PLAYBOOK_PATH: "/tmp/semaphore/"
+          
+          SEMAPHORE_ADMIN_PASSWORD: "{{ semapwd }}"
+          SEMAPHORE_ADMIN_NAME: "admin"
+          SEMAPHORE_ADMIN_EMAIL: "davrot@uni-bremen.de"
+          SEMAPHORE_ADMIN: "admin"
+          
+          SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ semakey }}"
+          
+          SEMAPHORE_LDAP_ACTIVATED: 'no'
+          
+          TZ: "Europe/Berlin"
+
+        networks:
+          - name: semaphoreNet
+          - name: bridge
+        comparisons:
+          networks: strict
 
 

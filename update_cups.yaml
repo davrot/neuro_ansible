@@ -1,0 +1,19 @@
+---
+- name: update cups setting
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Unset Cups
+      lineinfile:
+        path: /etc/cups/client.conf
+        state: absent
+        line: "ServerName 10.10.10.16"
+        create: true
+
+    - name: Set Cups
+      lineinfile:
+        path: /etc/cups/client.conf
+        state: present
+        line: "ServerName 10.10.0.8"
+        create: true

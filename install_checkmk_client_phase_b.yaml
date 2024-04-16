@@ -7,3 +7,6 @@
     - name: register check client
       shell: "myhostname=`hostname` ; cmk-agent-ctl register --server 10.10.0.3:8000 --site cmk --user automation --trust-cert --password '{{ password }}' --hostname $myhostname"
 
+
+# firewall-cmd --zone=public --add-port=6556/tcp --permanent
+# firewall-cmd --zone=public --add-port=6556/tcp

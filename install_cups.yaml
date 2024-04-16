@@ -1,0 +1,89 @@
+---
+- name: install cups
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true
+
+    - name: ldap
+      include_tasks: yaml_sub/ldap.yaml
+
+    - name: sssd
+      include_tasks: yaml_sub/sssd.yaml
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install nfs tools
+      dnf:
+        name: nfs-utils,nfs-utils-coreos,nfsv4-client-utils,rpcbind
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: Make sure rpcbind service unit is started
+      systemd_service:
+        enabled: true
+        state: started
+        name: rpcbind
+
+    - name: mount_info
+      include_tasks: yaml_sub/mount_info.yaml
+
+    - name: install cups
+      ansible.builtin.dnf:
+        name: cups,cups-client,cups-libs,cups-lpd,hplip,gutenprint,gutenprint-cups
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disablerepo:
+          - oneAPI
+
+    - name: Set Cups (2)
+      lineinfile:
+        path: /etc/cups/cupsd.conf
+        state: absent
+        line: "Listen localhost:631"
+        create: true
+  
+    - name: Set Cups (2)
+      lineinfile:
+        path: /etc/cups/cupsd.conf
+        state: present
+        line: "Listen *:631"
+        create: true
+          
+    - name: Make sure cups is started
+      systemd_service:
+        name: cups
+        enabled: true
+        state: started
+
+    - name: Make sure cups-browsed is started
+      systemd_service:
+        name: cups-browsed
+        enabled: true
+        state: started
+
