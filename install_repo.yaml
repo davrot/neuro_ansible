@@ -1,0 +1,78 @@
+---
+- name: install repo 
+  hosts: all
+  become: true
+    
+  tasks:
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install nfs tools
+      dnf:
+        name: nfs-utils,nfs-utils-coreos,nfsv4-client-utils,rpcbind
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+            
+    - name: Make sure rpcbind service unit is started
+      systemd_service:
+        enabled: true
+        state: started
+        name: rpcbind
+
+
+    - name: Mount /web
+      ansible.posix.mount:
+        src: 10.10.1.51:/volume1/web
+        path: /web
+        opts: rw,sync,hard,nolock
+        boot: true
+        state: mounted
+        fstype: nfs
+
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/install_docker.yaml
+
+    - name: Create volume code data
+      community.docker.docker_volume:
+        name: code_data
+        state: present
+
+    - name: Create httpd container
+      community.docker.docker_container:
+        name: httpd
+        image: httpd:alpine
+        state: started
+        recreate: yes
+        restart_policy: always
+
+        volumes:
+          - "/web:/usr/local/apache2/htdocs/"
+        published_ports:
+          - "80:80/tcp"
+
+
+

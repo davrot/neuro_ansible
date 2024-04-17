@@ -10,103 +10,103 @@
     block: |
       [FEDORACORE]
       name=Fedora Core $releasever
-      baseurl=http://10.10.1.1/repos/Fedora/$releasever/Fedora/os
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/Fedora/os
       enabled=1
       gpgcheck=0
       
       [FEDORAUPDATE]
       name=Fedora Update $releasever
-      baseurl=http://10.10.1.1/repos/Fedora/$releasever/Fedora_Update
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/Fedora_Update
       enabled=1
       gpgcheck=0
       
       [CUDA_37]
       name=NVidia Cuda 37
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/cuda_37
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/cuda_37
       enabled=0
       gpgcheck=0
       
       [CUDA_36]
       name=NVidia Cuda 36
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/cuda_36
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/cuda_36
       enabled=0
       gpgcheck=0
       
       [CUDA_35]
       name=NVidia Cuda 35
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/cuda_35
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/cuda_35
       enabled=0
       gpgcheck=0
       
       [CUDA_RHEL8]
       name=NVidia Cuda RHEL 8
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/cuda_rhel8
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/cuda_rhel8
       enabled=0
       gpgcheck=0
       
       [Google]
       name=Google
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/google_64
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/google_64
       enabled=1
       gpgcheck=0
       
       [oneAPI]
       name=oneAPI
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/oneAPI
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/oneAPI
       enabled=1
       gpgcheck=0
       
       [Opera]
       name=Opera
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/opera/rpm.opera.com/rpm
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/opera/rpm.opera.com/rpm
       enabled=1
       gpgcheck=0
       
       [RPMFusionFreeUpdate]
       name=RPM Fusion Free Update $releasever
-      baseurl=http://10.10.1.1/repos/Fedora/$releasever/fusion_free/
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/fusion_free/
       enabled=1
       gpgcheck=0
       
       [RPMFusionNonFreeUpdate]
       name=RPM Fusion Non Free Update $releasever
-      baseurl=http://10.10.1.1/repos/Fedora/$releasever/fusion_nonfree/
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/fusion_nonfree/
       enabled=1
       gpgcheck=0
       
       [RPMFusionFreeEverything]
       name=RPM Fusion Free Everything $releasever
-      baseurl=http://10.10.1.1/repos/Fedora/$releasever/fusion_free2/os
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/fusion_free2/os
       enabled=1
       gpgcheck=0
       
       [RPMFusionNonFreeEverything]
       name=RPM Fusion Non Free Everything $releasever
-      baseurl=http://10.10.1.1/repos/Fedora/$releasever/fusion_nonfree2/os
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/fusion_nonfree2/os
       enabled=1
       gpgcheck=0
       
       [SGE]
       name=SGE
-      baseurl=http://10.10.1.1/repos/Fedora/32/sge/copr-be.cloud.fedoraproject.org/results/loveshack/SGE/fedora-32-x86_64
+      baseurl=http://10.10.0.11/repos/Fedora/32/sge/copr-be.cloud.fedoraproject.org/results/loveshack/SGE/fedora-32-x86_64
       enabled=1
       gpgcheck=0
       
       [VSCode]
       name=VS Code
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/vscode/packages.microsoft.com/yumrepos/vscode
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/vscode/packages.microsoft.com/yumrepos/vscode
       enabled=1
       gpgcheck=0
       
       [zoom]
       name=zoom
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/zoom
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/zoom
       enabled=1
       gpgcheck=0
       
       [msedge]
       name=msedge
-      baseurl=http://10.10.1.1/repos/Fedora/AllVersion/edge/packages.microsoft.com/yumrepos/edge
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/edge/packages.microsoft.com/yumrepos/edge
       enabled=1
       gpgcheck=0
       

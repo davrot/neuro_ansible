@@ -1,43 +1,43 @@
-gate0
-gate1
-gate2
-gp3u1
-gp3u2
-gp4u1
-gp4u2
-gp4u3
-gp4u4
-gp4u5
-gp4u6
-gp4u7
-granat1
-granat2
-granat3
-granat4
-granat5
-granat6
-granat7
-granat8
-octopode
-doppio
-fatbastard
-nc46
-nc47
-nc48
-nc49
-nc50
-nc51
-nc52
-nc53
-nc54
-nc55
-nc56
-nc57
-nc58
-nc59
-nc60
-nc61
-nc62
-nc63
-nc64
-nc66
+gate0 ansible_user=ansibleuser
+gate1 ansible_user=ansibleuser
+gate2 ansible_user=ansibleuser
+gp3u1 ansible_user=ansibleuser
+gp3u2 ansible_user=ansibleuser
+gp4u1 ansible_user=ansibleuser
+gp4u2 ansible_user=ansibleuser
+gp4u3 ansible_user=ansibleuser
+gp4u4 ansible_user=ansibleuser
+gp4u5 ansible_user=ansibleuser
+gp4u6 ansible_user=ansibleuser
+gp4u7 ansible_user=ansibleuser
+granat1 ansible_user=ansibleuser
+granat2 ansible_user=ansibleuser
+granat3 ansible_user=ansibleuser
+granat4 ansible_user=ansibleuser
+granat5 ansible_user=ansibleuser
+granat6 ansible_user=ansibleuser
+granat7 ansible_user=ansibleuser
+granat8 ansible_user=ansibleuser
+octopode ansible_user=ansibleuser
+doppio ansible_user=ansibleuser
+fatbastard ansible_user=ansibleuser
+nc46 ansible_user=ansibleuser
+nc47 ansible_user=ansibleuser
+nc48 ansible_user=ansibleuser
+nc49 ansible_user=ansibleuser
+nc50 ansible_user=ansibleuser
+nc51 ansible_user=ansibleuser
+nc52 ansible_user=ansibleuser
+nc53 ansible_user=ansibleuser
+nc54 ansible_user=ansibleuser
+nc55 ansible_user=ansibleuser
+nc56 ansible_user=ansibleuser
+nc57 ansible_user=ansibleuser
+nc58 ansible_user=ansibleuser
+nc59 ansible_user=ansibleuser
+nc60 ansible_user=ansibleuser
+nc61 ansible_user=ansibleuser
+nc62 ansible_user=ansibleuser
+nc63 ansible_user=ansibleuser 
+nc64 ansible_user=ansibleuser 
+nc66 ansible_user=ansibleuser
