@@ -4,25 +4,6 @@
   become: true
 
   tasks:
-    - name: remove other files
-      include_tasks: yaml_sub/myrepo_clean.yaml
-    - name: update file myrepo.repo
-      import_tasks: yaml_sub/myrepo_data.yaml
-
-    - name: install nfs tools
-      dnf:
-        name: nfs-utils,nfs-utils-coreos,nfsv4-client-utils,rpcbind
-        state: present
-        update_cache: true
-        skip_broken: true
-        nobest: false
-        allowerasing: true
-
-    - name: Make sure rpcbind service unit is started
-      systemd_service:
-        enabled: true
-        state: started
-        name: rpcbind
 
     - name: mount_info
       include_tasks: yaml_sub/mount_info.yaml
