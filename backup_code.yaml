@@ -1,0 +1,37 @@
+---
+- name: backup code
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: make backup folder
+      ansible.builtin.file:
+        path: "/code_backup/"
+        owner: "ansibleuser"
+        group: "ansibleuser"
+        mode: '0700'
+        state: "directory"
+
+    - name: delete old file
+      ansible.builtin.file:
+        path: "/code_backup/code_{{ ansible_hostname }}.tgz"
+        state: "absent"
+
+    - name: create archive
+      community.general.archive:
+        dest: "/code_backup/code_{{ ansible_hostname }}.tgz"
+        path: "/var/lib/docker/volumes"
+        owner: "ansibleuser"
+
+    - name: create sudo permision 
+      lineinfile:
+        path: "/etc/sudoers.d/root"
+        create: true
+        state: present
+        line: "root ALL=(ansibleuser) NOPASSWD: ALL"
+
+    - name: scp file into safety
+      ansible.builtin.shell: 'scp -o "StrictHostKeyChecking accept-new" /code_backup/code_{{ ansible_hostname }}.tgz ansibleuser@10.10.0.2:/home/backup_ansible/'
+      become: false

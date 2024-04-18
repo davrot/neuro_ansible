@@ -63,12 +63,22 @@
 
     - name: install slurm
       dnf:
-        name: slurm,slurm-slurmctld,slurm-slurmdbd,slurm-slurmrestd,slurm-gui,munge,python3-mysql
+        name: munge,python3-mysql
         state: present
         update_cache: true
         skip_broken: true
         nobest: false
         allowerasing: true
+
+
+    # - name: install slurm
+    #   dnf:
+    #     name: slurm,slurm-slurmctld,slurm-slurmdbd,slurm-slurmrestd,slurm-gui,munge,python3-mysql
+    #     state: present
+    #     update_cache: true
+    #     skip_broken: true
+    #     nobest: false
+    #     allowerasing: true
 
     - name: install munge server
       include_tasks: yaml_sub/install_munge_server.yaml
