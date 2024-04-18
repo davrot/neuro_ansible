@@ -1,0 +1,9 @@
+---
+- name: set cluster crontab
+  hosts: all
+  become: true
+
+  tasks:
+    - name: set cluster crontab
+      include_tasks: yaml_sub/set_cluster_crontab.yaml
+

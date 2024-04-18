@@ -1,0 +1,62 @@
+---
+- name: install cluster stuff 
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install base system
+      include_tasks: yaml_sub/install_base_system.yaml
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    # - name: install movie tools
+    #   dnf:
+    #     name: mencoder,mmv,mplayer,HandBrake
+    #     state: present
+    #     update_cache: true
+    #     skip_broken: true
+    #     nobest: false
+    #     allowerasing: true
+
+    - name: make sure gdm is stopped
+      ansible.builtin.systemd_service:
+        name: gdm
+        state: stopped
+        enabled: false
+
+    - name: make sure lxdm is started
+      ansible.builtin.systemd_service:
+        name: lxdm
+        state: started
+        enabled: true
+
+    - name: set cluster crontab
+      include_tasks: yaml_sub/set_cluster_crontab.yaml
+
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true
+
+    - name: Change default target to graphical.target
+      file:
+        src: /usr/lib/systemd/system/multi-user.target
+        dest: /etc/systemd/system/default.target
+        state: link
+
+    - name: disable tracker 
+      shell: 'for f in /etc/xdg/autostart/tracker*.desktop; do echo "Hidden=true" | tee -a "$f"; done'

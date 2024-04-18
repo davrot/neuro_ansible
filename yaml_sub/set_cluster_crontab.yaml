@@ -1,0 +1,15 @@
+---
+  - name: set new crontab
+    blockinfile:
+      path: /root/new_crontab.txt
+      state: present
+      create: true
+      owner: "root"
+      group: "root"
+      mode: "0644"
+      block: |    
+        * * * * * sh /home/doomsdaydevice/doomsdaydevice.sh
+        */5 * * * * sh /sge-root/sge_heatbeat.sh
+
+  - name: set crontab
+    shell: "crontab /root/new_crontab.txt"

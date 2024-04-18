@@ -209,6 +209,13 @@
           SEMAPHORE_LDAP_ACTIVATED: 'no'
           
           ANSIBLE_HOST_KEY_CHECKING: "False"
+
+          email_alert: "true"
+          email_host: "smtpd"
+          email_port: "25"
+          email_sender: "Ansible Neuro ITP"
+          email_secure: "False"
+
           
           TZ: "Europe/Berlin"
 
