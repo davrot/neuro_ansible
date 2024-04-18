@@ -21,8 +21,8 @@
         recreate: no
         restart_policy: always
         published_ports:
-          - "8000:8000/tcp"
-          - "9443:9443/tcp"
+          - "80:8000/tcp"
+          - "443:9443/tcp"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_data:/data
