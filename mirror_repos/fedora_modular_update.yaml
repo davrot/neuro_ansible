@@ -1,0 +1,25 @@
+---
+- name: mirror fedora modular update repo
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars: 
+    work_path: "Fedora_Modular_Update"
+    src_url: "rsync://ftp.halifax.rwth-aachen.de/fedora/linux/updates/{{ version }}/Modular/x86_64/"
+
+  tasks:
+
+    - name: create directory
+      ansible.builtin.file:
+        path: "{{ base_path }}/{{ version }}/{{ work_path }}"
+        state: "directory"
+
+    - name: syncronize
+      ansible.posix.synchronize:
+        dest: "{{ base_path }}/{{ version }}/{{ work_path }}"
+        src: "{{ src_url }}"
+        delete: "true"
+      delegate_to: "{{ inventory_hostname }}"
+
+
