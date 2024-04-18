@@ -64,14 +64,14 @@
     state: mounted
     fstype: nfs
 
-- name: Mount /data_1
-  ansible.posix.mount:
-    src: 10.10.1.31:/volume1/data
-    path: /data_1
-    opts: rw,sync,hard,nolock
-    boot: true
-    state: absent
-    fstype: nfs
+# - name: Mount /data_1
+#   ansible.posix.mount:
+#     src: 10.10.1.31:/volume1/data
+#     path: /data_1
+#     opts: rw,sync,hard,nolock
+#     boot: true
+#     state: absent
+#     fstype: nfs
 
 - name: Mount /data_1
   ansible.posix.mount:
@@ -82,14 +82,14 @@
     state: mounted
     fstype: nfs
 
-- name: Mount /web
-  ansible.posix.mount:
-    src: 10.10.1.1:/volume1/web
-    path: /web
-    opts: rw,sync,hard,nolock
-    boot: true
-    state: absent
-    fstype: nfs
+# - name: Mount /web
+#   ansible.posix.mount:
+#     src: 10.10.1.1:/volume1/web
+#     path: /web
+#     opts: rw,sync,hard,nolock
+#     boot: true
+#     state: absent
+#     fstype: nfs
 
 
 - name: Mount /web
