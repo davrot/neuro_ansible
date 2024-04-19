@@ -1,0 +1,83 @@
+---
+- name: install wikimedia
+  hosts: all
+  become: true
+
+  tasks:
+  
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install client
+      ansible.builtin.dnf:
+        name: "http://10.10.0.3/cmk/check_mk/agents/check-mk-agent-2.2.0p24-1.noarch.rpm"
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+        disable_gpg_check: true
+
+    - name: remove other files
+      include_tasks: yaml_sub/install_docker.yaml
+
+    - name: Create network AuthentikNet
+      community.docker.docker_network:
+        name: WikiNet
+
+    - name: Create volume maria_db
+      community.docker.docker_volume:
+        name: maria_db
+        state: present
+
+    - name: Create mariab container
+      community.docker.docker_container:
+        name: mariadb
+        image: mariadb
+        state: started
+        recreate: no
+        restart_policy: always
+        env:
+          MARIADB_DATABASE: "my_wiki"
+          MARIADB_USER: "wikiuser"
+          MARIADB_PASSWORD: "{{ sqlpwd }}"
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+          MYSQL_ROOT_HOST: '%'
+        networks:
+          - name: WikiNet
+        comparisons:
+          networks: strict
+        volumes:
+          - "maria_db:/var/lib/mysql"
+
+    - name: Create volume images
+      community.docker.docker_volume:
+        name: wiki_images
+        state: present
+
+    - name: Create wiki container
+      community.docker.docker_container:
+        name: wiki
+        image: mediawiki
+        state: started
+        recreate: no
+        restart_policy: always
+        published_ports:
+          - "80:80/tcp"        
+        networks:
+          - name: WikiNet
+          - name: bridge
+        comparisons:
+          networks: strict
+        volumes:
+          - "wiki_images:/var/www/html/images"
+
+      # After initial setup, download LocalSettings.php to the same directory as
+      # this yaml and uncomment the following line and use compose to restart
+      # the mediawiki service
+      # - ./LocalSettings.php:/var/www/html/LocalSettings.php
+
+
