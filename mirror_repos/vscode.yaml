@@ -16,7 +16,7 @@
         state: "directory"
 
     - name: mirror repo
-      shell: "dnf reposync -a x86_64 --delete --download-metadata --norepopath -p {{ work_path }} --repofrompath={{repoid}},{{ src_url }} --repoid={{repoid}}"
+      shell: "dnf reposync -a x86_64 --delete --download-metadata --norepopath -p {{ work_path }} --repofrompath=x,{{ src_url }} --repoid=x"
 
 
 

@@ -58,7 +58,7 @@
       
       [Opera]
       name=Opera
-      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/opera/rpm.opera.com/rpm
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/opera
       enabled=1
       gpgcheck=0
       
@@ -94,7 +94,7 @@
       
       [VSCode]
       name=VS Code
-      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/vscode/packages.microsoft.com/yumrepos/vscode
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/vscode
       enabled=1
       gpgcheck=0
       
@@ -106,14 +106,13 @@
       
       [msedge]
       name=msedge
-      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/edge/packages.microsoft.com/yumrepos/edge
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/edge
       enabled=1
       gpgcheck=0
       
       [docker-ce-stable]
       name=Docker CE Stable - $basearch
-      baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+      baseurl=http://10.10.0.11/repos/Fedora/$releasever/docker
       enabled=0
-      gpgcheck=1
-      gpgkey=https://download.docker.com/linux/fedora/gpg
+      gpgcheck=0
       

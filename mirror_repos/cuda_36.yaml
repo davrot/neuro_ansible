@@ -1,13 +1,13 @@
 ---
-- name: mirror cuda 35 repo
+- name: mirror cuda 36 repo
   hosts: all
   become: true
   gather_facts: true
 
   vars: 
-    repoid: "cuda_35"
+    repoid: "cuda_36"
     work_path: "/web/repos/Fedora/AllVersion/{{ repoid }}"    
-    src_url: "http://developer.download.nvidia.com/compute/cuda/repos/fedora35/x86_64"
+    src_url: "http://developer.download.nvidia.com/compute/cuda/repos/fedora36/x86_64"
 
   tasks:
 
