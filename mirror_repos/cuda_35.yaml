@@ -1,0 +1,23 @@
+---
+- name: mirror cuda 35 repo
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars: 
+    repoid: "cuda_35"
+    work_path: "/web/repos/Fedora/AllVersion/{{ repoid }}"    
+    src_url: "http://developer.download.nvidia.com/compute/cuda/repos/fedora35/x86_64"
+
+  tasks:
+
+    - name: create directory
+      ansible.builtin.file:
+        path: "{{ work_path }}"
+        state: "directory"
+
+    - name: mirror repo
+      shell: "dnf reposync -a x86_64 --delete --download-metadata --norepopath -p {{ work_path }} --repofrompath={{repoid}},{{ src_url }} --repoid={{repoid}}"
+
+
+

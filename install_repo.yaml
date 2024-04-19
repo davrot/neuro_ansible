@@ -61,7 +61,7 @@
 
     - name: install rsync
       dnf:
-        name: rsync
+        name: rsync,dnf-command(reposync)
         state: present
         update_cache: true
         skip_broken: true
