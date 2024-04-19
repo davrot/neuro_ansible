@@ -5,20 +5,20 @@
   gather_facts: true
 
   vars: 
-    work_path: "fusion_nonfree_nvidia"
-    src_url: "rsync://mirror1.hs-esslingen.de/rpmfusion/nonfree/fedora/nvidia-driver/{{ version }}/x86_64/"
+    repoid: "fusion_nonfree_nvidia"
+    work_path: "/web/repos/Fedora/{{ version }}/{{ repoid }}"
+    src_url: "http://ftp-stud.hs-esslingen.de/pub/Mirrors/rpmfusion.org/nonfree/fedora/nvidia-driver/{{ version }}/x86_64/"
 
   tasks:
     - name: create directory
       ansible.builtin.file:
-        path: "{{ base_path }}/{{ version }}/{{ work_path }}"
+        path: "{{ work_path }}"
         state: "directory"
 
-    - name: syncronize
-      ansible.posix.synchronize:
-        dest: "{{ base_path }}/{{ version }}/{{ work_path }}"
-        src: "{{ src_url }}"
-        delete: "true"
-      delegate_to: "{{ inventory_hostname }}"
+    - name: mirror repo
+      shell: "dnf reposync --remote-time --newest-only --delete --download-metadata --norepopath -p {{ work_path }} --repofrompath=x,{{ src_url }} --repoid=x"
+
+
+
 
 

@@ -5,6 +5,22 @@
 
   tasks:
 
+    - name: block shutdown
+      blockinfile:
+        path: /etc/polkit-1/rules.d/55-inhibit-shutdown.rules
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0666"
+        block: |
+          polkit.addRule(function(action, subject) {
+            if (action.id.indexOf("org.freedesktop.login1.power-off") == 0 ||
+              action.id.indexOf("org.freedesktop.login1.reboot") == 0) {
+              return polkit.Result.AUTH_ADMIN;
+            }
+          });
+
     - name: Make sure systemd-oomd service unit is stopped
       systemd_service:
        state: stopped
@@ -15,32 +31,21 @@
     - name: update file myrepo.repo
       import_tasks: yaml_sub/myrepo_data.yaml
 
-    - name: update system (base)
+    - name: update system 
       dnf:
-        name: "*"
+        name: "google-chrome-stable,microsoft-edge-stable,code,zoom,microsoft-edge-stable,thunderbird,firefox"
         state: latest
         update_cache: true
         skip_broken: true
         nobest: false
         allowerasing: true
-
-    - name: remove other files
-      include_tasks: yaml_sub/myrepo_clean.yaml
-    - name: update file myrepo.repo
-      import_tasks: yaml_sub/myrepo_data.yaml
-
-    - name: update system (all repo)
-      dnf:
-        name: "*"
-        state: latest
-        update_cache: true
-        skip_broken: true
-        nobest: false
-        allowerasing: true
-        enablerepo: "*"
 
     - name: Make sure systemd-oomd service unit is started
       systemd_service:
        state: started
        name: systemd-oomd
 
+    - name: stop shutdown embargo
+      ansible.builtin.file:
+        path: /etc/polkit-1/rules.d/55-inhibit-shutdown.rules
+        state: "absent"

@@ -1,3 +1,0 @@
-# Broken
-dnf reposync -a x86_64 --delete --download-metadata --norepopath -p /web/repos/Fedora/AllVersion/google_64 --repofrompath=google_64,http://dl.google.com/linux/chrome/rpm/stable/ --repoid=google_64
- 
