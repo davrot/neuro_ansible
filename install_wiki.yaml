@@ -96,7 +96,7 @@
           ## be publicly accessible from the web.
           #$wgCacheDirectory = "$IP/cache";
 
-          $wgSecretKey = "68876c5ab7953361002cc0afd46371202badcf9aa4241976eafe44ac3e330e09";
+          $wgSecretKey = "{{ wgSecretKey }}";
 
           # Changing this will log out all existing sessions.
           $wgAuthenticationTokenVersion = "1";
