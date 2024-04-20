@@ -1,5 +1,5 @@
 ---
-- name: install cluster stuff 
+- name: install cluster stuff
   hosts: all
   become: true
 
@@ -58,5 +58,8 @@
         dest: /etc/systemd/system/default.target
         state: link
 
-    - name: disable tracker 
+    - name: disable tracker
       shell: 'for f in /etc/xdg/autostart/tracker*.desktop; do echo "Hidden=true" | tee -a "$f"; done'
+
+    - name: set cluster crontab
+      include_tasks: yaml_sub/set_cluster_crontab.yaml
