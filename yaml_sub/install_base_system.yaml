@@ -157,24 +157,24 @@
     state: present
     line: "ClientAliveCountMax 500"
 
-- name: Set Services (sge_qmaster)
-  lineinfile:
-    path: /etc/services
-    state: present
-    line: "sge_qmaster 6444/tcp"
-    create: true
+# - name: Set Services (sge_qmaster)
+#   lineinfile:
+#     path: /etc/services
+#     state: present
+#     line: "sge_qmaster 6444/tcp"
+#     create: true
 
-- name: Set Services (sge_execd)
-  lineinfile:
-    path: /etc/services
-    state: present
-    line: "sge_execd 6445/tcp"
+# - name: Set Services (sge_execd)
+#   lineinfile:
+#     path: /etc/services
+#     state: present
+#     line: "sge_execd 6445/tcp"
 
-- name: Set Services (nrpe)
-  lineinfile:
-    path: /etc/services
-    state: present
-    line: "nrpe 5666/tcp # NRPE"
+# - name: Set Services (nrpe)
+#   lineinfile:
+#     path: /etc/services
+#     state: present
+#     line: "nrpe 5666/tcp # NRPE"
 
 - name: Set Cups
   lineinfile:
@@ -220,33 +220,33 @@
     dest: /bin/chrome
     state: link
 
-- name: set /etc/profile
-  blockinfile:
-    path: /etc/profile.d/sge.sh
-    state: present
-    create: true
-    owner: "root"
-    group: "root"
-    mode: "0666"
-    block: |
-      SGE_ROOT=/sge-root
-      export SGE_ROOT
+# - name: set /etc/profile
+#   blockinfile:
+#     path: /etc/profile.d/sge.sh
+#     state: present
+#     create: true
+#     owner: "root"
+#     group: "root"
+#     mode: "0666"
+#     block: |
+#       SGE_ROOT=/sge-root
+#       export SGE_ROOT
 
-      SGE_ARCH=`/opt/sge/util/arch`
-      export SGE_ARCH
-      DRMAA_LIBRARY_PATH=/opt/sge/lib/lx-amd64/libdrmaa.so
+#       SGE_ARCH=`/opt/sge/util/arch`
+#       export SGE_ARCH
+#       DRMAA_LIBRARY_PATH=/opt/sge/lib/lx-amd64/libdrmaa.so
 
-      SGE_CELL=neuro
-      export SGE_CELL
-      SGE_CLUSTER_NAME=Neuro
-      export SGE_CLUSTER_NAME
+#       SGE_CELL=neuro
+#       export SGE_CELL
+#       SGE_CLUSTER_NAME=Neuro
+#       export SGE_CLUSTER_NAME
 
-      unset SGE_QMASTER_PORT
-      unset SGE_EXECD_PORT
+#       unset SGE_QMASTER_PORT
+#       unset SGE_EXECD_PORT
 
-      MANPATH=/opt/sge/man:$MANPATH
-      export MANPATH
-      PATH=/opt/sge/bin:/opt/sge/bin/lx-amd64/:$PATH
-      export PATH
-      shlib_path_name=/opt/sge/lib/lx-amd64/:$LD_LIBRARY_PATH
-      export shlib_path_name
+#       MANPATH=/opt/sge/man:$MANPATH
+#       export MANPATH
+#       PATH=/opt/sge/bin:/opt/sge/bin/lx-amd64/:$PATH
+#       export PATH
+#       shlib_path_name=/opt/sge/lib/lx-amd64/:$LD_LIBRARY_PATH
+#       export shlib_path_name
