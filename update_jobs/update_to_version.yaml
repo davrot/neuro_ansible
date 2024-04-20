@@ -1,9 +1,10 @@
 ---
-- name: install our repos
+- name: upgrade to next version
   hosts: all
   become: true
 
   tasks:
+
     - name: block shutdown
       blockinfile:
         path: /etc/polkit-1/rules.d/55-inhibit-shutdown.rules
@@ -22,29 +23,34 @@
 
     - name: Make sure systemd-oomd service unit is stopped
       systemd_service:
-        state: stopped
-        name: systemd-oomd
+       state: stopped
+       name: systemd-oomd
 
     - name: remove other files
       include_tasks: ../yaml_sub/myrepo_clean.yaml
     - name: update file myrepo.repo
       import_tasks: ../yaml_sub/myrepo_data.yaml
 
-    - name: update system
+    - name: install system-upgrade
       dnf:
-        name: "google-chrome-stable,microsoft-edge-stable,code,zoom,microsoft-edge-stable,thunderbird,firefox"
-        state: latest
+        name: "dnf-command(system-upgrade)"
+        state: present
         update_cache: true
         skip_broken: true
         nobest: false
         allowerasing: true
 
+    - name: upgrade version 
+      shell: "dnf -y system-upgrade download --refresh --releasever={{version}} --allowerasing --best --skip-broken; dnf system-upgrade reboot"
+
     - name: Make sure systemd-oomd service unit is started
       systemd_service:
-        state: started
-        name: systemd-oomd
+       state: started
+       name: systemd-oomd
 
     - name: stop shutdown embargo
       ansible.builtin.file:
         path: /etc/polkit-1/rules.d/55-inhibit-shutdown.rules
         state: "absent"
+
+

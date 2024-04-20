@@ -1,15 +1,37 @@
 ---
-- name: install desktop stuff 
+- name: install desktop stuff
   hosts: all
   become: true
 
   tasks:
+    - name: block shutdown
+      blockinfile:
+        path: /etc/polkit-1/rules.d/55-inhibit-shutdown.rules
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0666"
+        block: |
+          polkit.addRule(function(action, subject) {
+            if (action.id.indexOf("org.freedesktop.login1.power-off") == 0 ||
+              action.id.indexOf("org.freedesktop.login1.reboot") == 0) {
+              return polkit.Result.AUTH_ADMIN;
+            }
+          });
+
+    - name: Make sure systemd-oomd service unit is stopped
+      systemd_service:
+        state: stopped
+        name: systemd-oomd
+
     - name: Install base system
       include_tasks: yaml_sub/install_base_system.yaml
 
     - name: remove other files
       include_tasks: yaml_sub/myrepo_clean.yaml
     - name: update file myrepo.repo
+
       import_tasks: yaml_sub/myrepo_data.yaml
 
     - name: install movie tools
@@ -39,5 +61,15 @@
         dest: /etc/systemd/system/default.target
         state: link
 
-    - name: disable tracker 
+    - name: disable tracker
       shell: 'for f in /etc/xdg/autostart/tracker*.desktop; do echo "Hidden=true" | tee -a "$f"; done'
+
+    - name: Make sure systemd-oomd service unit is started
+      systemd_service:
+        state: started
+        name: systemd-oomd
+
+    - name: stop shutdown embargo
+      ansible.builtin.file:
+        path: /etc/polkit-1/rules.d/55-inhibit-shutdown.rules
+        state: "absent"
