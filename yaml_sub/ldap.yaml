@@ -1,5 +1,4 @@
 ---
-
 - name: remove other files
   include_tasks: yaml_sub/myrepo_clean.yaml
 - name: update file myrepo.repo
@@ -25,7 +24,6 @@
     path: /etc/openldap/ldap.conf
     state: absent
     line: "BASE dc=nas1,dc=neuro,dc=itp"
-    
 
 - name: set LDAP
   blockinfile:

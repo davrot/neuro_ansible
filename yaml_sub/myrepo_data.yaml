@@ -50,11 +50,11 @@
       enabled=1
       gpgcheck=0
 
-      # [oneAPI]
-      # name=oneAPI
-      # baseurl=http://10.10.0.11/repos/Fedora/AllVersion/oneAPI
-      # enabled=1
-      # gpgcheck=0
+      [oneAPI]
+      name=oneAPI
+      baseurl=http://10.10.0.11/repos/Fedora/AllVersion/oneAPI
+      enabled=1
+      gpgcheck=0
 
       [Opera]
       name=Opera
