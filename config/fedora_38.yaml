@@ -1,4 +1,3 @@
 ---
-  version: "38"
-  base_path: "/web/repos/Fedora"
-  
+version: "38"
+base_path: "/web/repos/Fedora"

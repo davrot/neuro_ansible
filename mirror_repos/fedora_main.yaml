@@ -4,10 +4,10 @@
   become: true
   gather_facts: true
 
-  vars: 
+  vars:
     repoid: "Fedora"
-    work_path: "/web/repos/Fedora/{{ version }}/{{ repoid }}"
-    src_url: "https://ftp.halifax.rwth-aachen.de/fedora/linux/releases/{{ version }}/Everything/x86_64/"
+    work_path: "/web/repos/Fedora/{{ version }}/{{ repoid }}/os"
+    src_url: "https://ftp.halifax.rwth-aachen.de/fedora/linux/releases/{{ version }}/Everything/x86_64/os/"
 
   tasks:
     - name: create directory
@@ -17,5 +17,3 @@
 
     - name: mirror repo
       shell: "dnf reposync --remote-time --newest-only --delete --download-metadata --norepopath -p {{ work_path }} --repofrompath=x,{{ src_url }} --repoid=x"
-
-
