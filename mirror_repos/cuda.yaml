@@ -1,0 +1,15 @@
+---
+- name: cuda_35
+  ansible.builtin.import_playbook: cuda_35
+
+- name: cuda_36
+  ansible.builtin.import_playbook: cuda_36
+
+- name: cuda_37
+  ansible.builtin.import_playbook: cuda_37
+
+- name: cuda_39
+  ansible.builtin.import_playbook: cuda_39
+
+- name: cuda_rhel8
+  ansible.builtin.import_playbook: cuda_rhel8

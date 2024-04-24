@@ -1,0 +1,12 @@
+---
+- name: fusion 39
+  ansible.builtin.import_playbook: fusion.yaml
+  vars:
+    version: "39"
+    base_path: "/web/repos/Fedora"
+
+- name: fusion 40
+  ansible.builtin.import_playbook: fusion.yaml
+  vars:
+    version: "40"
+    base_path: "/web/repos/Fedora"

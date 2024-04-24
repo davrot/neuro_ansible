@@ -1,0 +1,15 @@
+---
+- name: fusion_free_everything
+  ansible.builtin.import_playbook: fusion_free_everything.yaml
+
+- name: fusion_free
+  ansible.builtin.import_playbook: fusion_free.yaml
+
+- name: fusion_nonfree_everything
+  ansible.builtin.import_playbook: fusion_nonfree_everything.yaml
+
+- name: fusion_nonfree_nvidia
+  ansible.builtin.import_playbook: fusion_nonfree_nvidia.yaml
+
+- name: fusion_nonfree
+  ansible.builtin.import_playbook: fusion_nonfree.yaml
