@@ -1,0 +1,12 @@
+---
+- name: fedora_main 39
+  ansible.builtin.import_playbook: fedora_main.yaml
+  vars:
+    version: "39"
+    base_path: "/web/repos/Fedora"
+
+- name: fedora_main 40
+  ansible.builtin.import_playbook: fedora_main.yaml
+  vars:
+    version: "40"
+    base_path: "/web/repos/Fedora"

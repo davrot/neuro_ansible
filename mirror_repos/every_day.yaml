@@ -1,0 +1,51 @@
+---
+- name: chrome
+  ansible.builtin.import_playbook: chrome.yaml
+
+- name: opera
+  ansible.builtin.import_playbook: opera.yaml
+
+- name: vivaldi
+  ansible.builtin.import_playbook: vivaldi.yaml
+
+- name: vscode
+  ansible.builtin.import_playbook: vscode.yaml
+
+- name: edge
+  ansible.builtin.import_playbook: edge.yaml
+
+- name: fedora_main_update 39
+  ansible.builtin.import_playbook: fedora_main_update.yaml
+  vars:
+    version: "39"
+    base_path: "/web/repos/Fedora"
+
+- name: fedora_modular_update 39
+  ansible.builtin.import_playbook: fedora_modular_update.yaml
+  vars:
+    version: "39"
+    base_path: "/web/repos/Fedora"
+
+- name: docker 39
+  ansible.builtin.import_playbook: docker.yaml
+  vars:
+    version: "39"
+    base_path: "/web/repos/Fedora"
+
+- name: fedora_main_update 40
+  ansible.builtin.import_playbook: fedora_main_update.yaml
+  vars:
+    version: "40"
+    base_path: "/web/repos/Fedora"
+
+- name: fedora_modular_update 40
+  ansible.builtin.import_playbook: fedora_modular_update.yaml
+  vars:
+    version: "40"
+    base_path: "/web/repos/Fedora"
+
+- name: docker 40
+  ansible.builtin.import_playbook: docker.yaml
+  vars:
+    version: "40"
+    base_path: "/web/repos/Fedora"
