@@ -5,7 +5,7 @@
 
   tasks:
     # 39 -> 40
-    - name: install libva-intel-media-driver
+    - name: remove libva-intel-media-driver
       dnf:
         name: "libva-intel-media-driver"
         state: absent

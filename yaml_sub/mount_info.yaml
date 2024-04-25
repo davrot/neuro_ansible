@@ -12,7 +12,7 @@
     skip_broken: true
     nobest: false
     allowerasing: true
-        
+
 - name: Make sure rpcbind service unit is started
   systemd_service:
     enabled: true
@@ -24,7 +24,7 @@
     src: 10.10.1.21:/volume1/home_dir
     path: /home
     opts: rw,sync,hard,nolock
-    boot: true 
+    boot: true
     state: mounted
     fstype: nfs
 
@@ -34,7 +34,7 @@
     path: /glocal
     opts: rw,sync,hard,nolock
     boot: true
-    state: mounted
+    state: absent
     fstype: nfs
 
 - name: Mount /tools
@@ -91,7 +91,6 @@
 #     state: absent
 #     fstype: nfs
 
-
 - name: Mount /web
   ansible.posix.mount:
     src: 10.10.1.51:/volume1/web
@@ -100,4 +99,3 @@
     boot: true
     state: mounted
     fstype: nfs
-

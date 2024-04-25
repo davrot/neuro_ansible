@@ -1,4 +1,14 @@
 ---
+# 39 -> 40
+- name: remove sddm-wayland-plasma
+  dnf:
+    name: "sddm-wayland-plasma"
+    state: absent
+    update_cache: true
+    skip_broken: true
+    nobest: false
+    allowerasing: true
+
 - name: remove other files
   include_tasks: yaml_sub/myrepo_clean.yaml
 - name: update file myrepo.repo
@@ -30,7 +40,7 @@
     skip_broken: true
     nobest: false
     allowerasing: true
-    exclude: ghdl,sddm-x11
+    exclude: ghdl,sddm-x11,sddm-wayland-plasma,blender,sddm-wayland-sway
 
 - name: remove other files
   include_tasks: yaml_sub/myrepo_clean.yaml
