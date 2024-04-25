@@ -4,10 +4,10 @@
   become: true
   gather_facts: true
 
-  vars: 
+  vars:
     repoid: "fusion_nonfree2"
     work_path: "/web/repos/Fedora/{{ version }}/{{ repoid }}"
-    src_url: "http://ftp-stud.hs-esslingen.de/pub/Mirrors/rpmfusion.org/nonfree/fedora/releases/{{ version }}/Everything/x86_64/"
+    src_url: "http://ftp-stud.hs-esslingen.de/pub/Mirrors/rpmfusion.org/nonfree/fedora/releases/{{ version }}/Everything/x86_64/os"
 
   tasks:
     - name: create directory
