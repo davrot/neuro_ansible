@@ -1,0 +1,15 @@
+---
+- name: cuda
+  ansible.builtin.import_playbook: cuda.yaml
+
+- name: fedora_all
+  ansible.builtin.import_playbook: fedora_all.yaml
+
+- name: fusion_all
+  ansible.builtin.import_playbook: fusion_all.yaml
+
+- name: oneAPI
+  ansible.builtin.import_playbook: oneAPI.yaml
+
+- name: every_day
+  ansible.builtin.import_playbook: every_day.yaml
