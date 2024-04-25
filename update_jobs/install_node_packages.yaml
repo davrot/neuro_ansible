@@ -57,6 +57,16 @@
     - name: disable tracker
       shell: 'for f in /etc/xdg/autostart/tracker*.desktop; do echo "Hidden=true" | tee -a "$f"; done'
 
+    - name: Install cuda
+      dnf:
+        name: cuda
+        enablerepo: "*"
+        update_cache: true
+        state: latest
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
     - name: Make sure systemd-oomd service unit is started
       systemd_service:
         state: started
