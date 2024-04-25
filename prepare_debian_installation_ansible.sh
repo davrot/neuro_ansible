@@ -1,8 +1,8 @@
-apt-get update
-apt install software-properties-common
+apt-get -y update
+apt -y install software-properties-common
 add-apt-repository --yes --update ppa:ansible/ansible
-apt install ansible
-apt install gh
+apt -y install ansible
+apt -y install gh
 
-apt install mc vi sshpass ssh-keygen inetutils-ping git-all
+apt -y install mc vim sshpass inetutils-ping git-all
 

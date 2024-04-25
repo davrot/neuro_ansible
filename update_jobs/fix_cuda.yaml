@@ -1,1 +1,43 @@
+---
+- name: fix cuda
+  hosts: all
+  become: true
 
+  tasks:
+    - name: disable nvidia-driver
+      shell: "dnf -y module disable nvidia-driver"
+
+    - name: remove cuda
+      dnf:
+        name: "cuda*"
+        state: removed
+        allowerasing: true
+      ignore_errors: true
+
+    - name: remove nvidia-driver-cuda-libs
+      dnf:
+        name: "nvidia-driver*"
+        state: removed
+        allowerasing: true
+      ignore_errors: true
+
+    - name: install akmod-nvidia
+      dnf:
+        name: "akmod-nvidia"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: install cuda
+      dnf:
+        name: "cuda"
+        state: latest
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: reboot machine
+      shell: "reboot"
