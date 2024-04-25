@@ -23,7 +23,7 @@
       [CUDA_39]
       name=NVidia Cuda 39
       baseurl=http://10.10.0.11/repos/Fedora/AllVersion/cuda_39
-      enabled=0
+      enabled=1
       gpgcheck=0
 
       # [CUDA_37]
