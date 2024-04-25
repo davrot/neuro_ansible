@@ -68,7 +68,7 @@
           - "443:443/tcp"
 
         env:
-          backend: "code-server:8443"
+          backend: "[code-server]:8443"
 
         networks:
           - name: codeNet
