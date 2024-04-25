@@ -40,6 +40,9 @@
         recreate: no
         restart_policy: always
 
+        published_ports:
+          - "80:8443/tcp"
+          
         volumes:
           - "code_data:/config"
 
