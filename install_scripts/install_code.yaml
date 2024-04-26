@@ -37,11 +37,8 @@
         name: code-server
         image: lscr.io/linuxserver/code-server:latest
         state: started
-        recreate: no
+        recreate: yes
         restart_policy: always
-
-        # published_ports:
-        #   - "80:8443/tcp"
 
         volumes:
           - "code_data:/config"
