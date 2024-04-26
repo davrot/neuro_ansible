@@ -40,9 +40,9 @@
         recreate: no
         restart_policy: always
 
-        published_ports:
-          - "80:8443/tcp"
-          
+        # published_ports:
+        #   - "80:8443/tcp"
+
         volumes:
           - "code_data:/config"
 
@@ -56,27 +56,88 @@
 
         networks:
           - name: codeNet
-          - name: bridge
-          
         comparisons:
           networks: strict
 
-    - name: Create hitch container
+    - name: set nginx.conf
+      blockinfile:
+        path: /root/nginx/nginx.conf
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        block: |
+          events {}
+          http {
+            server {
+              listen 80 default_server;
+              server_name _;
+              return 301 https://$host$request_uri;
+            }
+            server {
+              listen 443 ssl;
+              ssl_certificate      /certs/nginx_certificate.pem;
+              ssl_certificate_key  /certs/nginx_key.pem;
+              ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;
+              ssl_prefer_server_ciphers   on;
+              ssl_ciphers                 EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+              add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+              server_tokens off;
+              client_max_body_size 50M;
+
+              location / {
+                proxy_pass http://code-server:8443;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_read_timeout 3m;
+                proxy_send_timeout 3m;
+              }
+            }
+          }
+
+    - name: copy key
+      ansible.builtin.copy:
+        src: "/config/certs/key.pem"
+        dest: "/root/nginx/key.pem"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: copy ca
+      ansible.builtin.copy:
+        src: "/config/certs/crt_ca.pem"
+        dest: "/root/nginx/ca.pem"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Create nginx container
       community.docker.docker_container:
-        name: hitch
-        image: hitch
+        name: nginx
+        image: "nginx:stable-alpine"
         state: started
         recreate: no
         restart_policy: always
 
-        published_ports:
-          - "443:443/tcp"
+        volumes:
+          - "/root/nginx/key.pem:/certs/nginx_key.pem:ro"
+          - "/root/nginx/ca.pem:/certs/nginx_certificate.pem:ro"
+          - "/root/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
 
+        ports:
+          - "0.0.0.0:443:443"
+          - "0.0.0.0:80:80"
         env:
-          backend: "[code-server]:8443"
+          NGINX_WORKER_PROCESSES: "4"
+          NGINX_WORKER_CONNECTIONS: "768"
 
         networks:
           - name: codeNet
-          - name: bridge
+
         comparisons:
           networks: strict
