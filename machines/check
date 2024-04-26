@@ -1,2 +1,2 @@
-check.neuro.uni-bremen.de ansible_user=ansibleuser
+check.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 

@@ -1,43 +1,43 @@
-gate0 ansible_user=ansibleuser
-gate1 ansible_user=ansibleuser
-gate2 ansible_user=ansibleuser
-gp3u1 ansible_user=ansibleuser
-gp3u2 ansible_user=ansibleuser
-gp4u1 ansible_user=ansibleuser
-gp4u2 ansible_user=ansibleuser
-gp4u3 ansible_user=ansibleuser
-gp4u4 ansible_user=ansibleuser
-gp4u5 ansible_user=ansibleuser
-gp4u6 ansible_user=ansibleuser
-gp4u7 ansible_user=ansibleuser
-granat1 ansible_user=ansibleuser
-granat2 ansible_user=ansibleuser
-granat3 ansible_user=ansibleuser
-granat4 ansible_user=ansibleuser
-granat5 ansible_user=ansibleuser
-granat6 ansible_user=ansibleuser
-granat7 ansible_user=ansibleuser
-granat8 ansible_user=ansibleuser
-octopode ansible_user=ansibleuser
-doppio ansible_user=ansibleuser
-fatbastard ansible_user=ansibleuser
-nc46 ansible_user=ansibleuser
-nc47 ansible_user=ansibleuser
-nc48 ansible_user=ansibleuser
-nc49 ansible_user=ansibleuser
-nc50 ansible_user=ansibleuser
-nc51 ansible_user=ansibleuser
-nc52 ansible_user=ansibleuser
-nc53 ansible_user=ansibleuser
-nc54 ansible_user=ansibleuser
-nc55 ansible_user=ansibleuser
-nc56 ansible_user=ansibleuser
-nc57 ansible_user=ansibleuser
-nc58 ansible_user=ansibleuser
-nc59 ansible_user=ansibleuser
-nc60 ansible_user=ansibleuser
-nc61 ansible_user=ansibleuser
-nc62 ansible_user=ansibleuser
-nc63 ansible_user=ansibleuser 
-nc64 ansible_user=ansibleuser 
-nc66 ansible_user=ansibleuser
+gate0.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gate1.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gate2.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp3u1.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp3u2.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u1.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u2.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u3.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u4.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u5.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u6.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+gp4u7.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat1.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat2.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat3.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat4.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat5.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat6.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat7.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+granat8.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+octopode.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+doppio.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+fatbastard.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc46.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc47.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc48.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc49.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc50.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc51.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc52.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc53.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc54.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc55.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc56.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc57.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc58.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc59.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc60.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc61.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc62.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc63.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc64.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+nc66.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'

@@ -1,1 +1,1 @@
-egg.neuro.uni-bremen.de ansible_user=ansibleuser
+egg.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'

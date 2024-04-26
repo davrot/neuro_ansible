@@ -1,1 +1,1 @@
-semaphore.neuro.uni-bremen.de ansible_user=ansibleuser
+semaphore.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'

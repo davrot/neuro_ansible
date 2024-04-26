@@ -1,1 +1,1 @@
-cups.neuro.uni-bremen.de ansible_user=ansibleuser
+cups.neuro.uni-bremen.de ansible_user=ansibleuser ansible_ssh_common_args='-o StrictHostKeyChecking=no'
