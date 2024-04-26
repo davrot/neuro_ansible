@@ -37,7 +37,7 @@
         name: code-server
         image: lscr.io/linuxserver/code-server:latest
         state: started
-        recreate: yes
+        recreate: no
         restart_policy: always
 
         volumes:
@@ -97,21 +97,21 @@
             }
           }
 
-#    - name: copy key
-#      ansible.builtin.copy:
-#        src: "/config/certs/key.pem"
-#        dest: "/root/nginx/key.pem"
-#        owner: root
-#        group: root
-#        mode: "0600"
+    - name: copy key
+      ansible.builtin.copy:
+        src: "/config/certs/key.pem"
+        dest: "/root/nginx/key.pem"
+        owner: root
+        group: root
+        mode: "0600"
 
-#    - name: copy ca
-#      ansible.builtin.copy:
-#        src: "/config/certs/crt_ca.pem"
-#        dest: "/root/nginx/ca.pem"
-#        owner: root
-#        group: root
-#        mode: "0600"
+    - name: copy ca
+      ansible.builtin.copy:
+        src: "/config/certs/crt_ca.pem"
+        dest: "/root/nginx/ca.pem"
+        owner: root
+        group: root
+        mode: "0600"
 
     - name: Create nginx container
       community.docker.docker_container:
