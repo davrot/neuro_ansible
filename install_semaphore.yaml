@@ -81,8 +81,8 @@
           MARIADB_DATABASE: "semaphore"
           MARIADB_USER: "semaphore"
           MARIADB_PASSWORD: "{{ sqlpwd }}"
-          MARIADB_ROOT_PASSWORD : "{{ sqlrootpwd }}"
-          MYSQL_ROOT_HOST: '%'
+          MARIADB_ROOT_PASSWORD: "{{ sqlrootpwd }}"
+          MYSQL_ROOT_HOST: "%"
         networks:
           - name: semaphoreNet
         comparisons:
@@ -101,13 +101,13 @@
         block: |
           listen on 0.0.0.0
           listen on ::
-          
+
           table aliases file:/etc/smtpd/aliases
-          
+
           queue ttl 4d
           bounce warn-interval 1h, 6h, 2d
           smtp max-message-size 35M
-          
+
           table authinfo db:/etc/smtpd/authinfo.db
           action default relay host "smtps://user@mailhost.neurotec.uni-bremen.de:465" auth <authinfo> tls no-verify
           match from any for any action default
@@ -161,7 +161,6 @@
           hostname = 127.0.0.1:25
           mda "/usr/bin/procmail -d %T"
 
-
     - name: Create volume semaphore_etc
       community.docker.docker_volume:
         name: semaphore_etc
@@ -177,6 +176,14 @@
         name: semaphore_tmp
         state: present
 
+    - name: copy key
+      ansible.builtin.copy:
+        src: "/config/neuro_ansible/semaphore-wrapper"
+        dest: "/root/semaphore-wrapper"
+        owner: root
+        group: root
+        mode: "0777"
+
     - name: Create semaphore container
       community.docker.docker_container:
         name: semaphore
@@ -184,12 +191,12 @@
         state: started
         recreate: yes
         restart_policy: always
-        published_ports:
-          - "80:3000/tcp"
+
         volumes:
           - "semaphore_etc:/etc/semaphore"
           - "semaphore_lib:/var/lib/semaphore"
           - "semaphore_tmp:/tmp/semaphore/"
+          - "/root/semaphore-wrapper:/usr/local/bin/semaphore-wrapper"
         env:
           SEMAPHORE_DB_USER: "semaphore"
           SEMAPHORE_DB_PASS: "{{ sqlpwd }}"
@@ -198,31 +205,108 @@
           SEMAPHORE_DB_DIALECT: "mysql"
           SEMAPHORE_DB: "semaphore"
           SEMAPHORE_PLAYBOOK_PATH: "/tmp/semaphore/"
-          
+
           SEMAPHORE_ADMIN_PASSWORD: "{{ semapwd }}"
           SEMAPHORE_ADMIN_NAME: "admin"
           SEMAPHORE_ADMIN_EMAIL: "davrot@uni-bremen.de"
           SEMAPHORE_ADMIN: "admin"
-          
+
           SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ semakey }}"
-          
-          SEMAPHORE_LDAP_ACTIVATED: 'no'
-          
+
+          SEMAPHORE_LDAP_ACTIVATED: "no"
+
           ANSIBLE_HOST_KEY_CHECKING: "False"
 
-          email_alert: "true"
-          email_host: "smtpd"
-          email_port: "25"
-          email_sender: "Ansible Neuro ITP"
-          email_secure: "False"
+          SEMAPHORE_EMAIL_ALERT: "yes"
+          SEMAPHORE_EMAIL_HOST: "smtpd"
+          SEMAPHORE_EMAIL_SENDER: "computers@neuro.uni-bremen.de"
 
-          
           TZ: "Europe/Berlin"
 
         networks:
           - name: semaphoreNet
-          - name: bridge
         comparisons:
           networks: strict
 
+    - name: set nginx.conf
+      blockinfile:
+        path: /root/nginx/nginx.conf
+        state: present
+        create: true
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        block: |
+          events {}
+          http {
+            server {
+              listen 80 default_server;
+              server_name _;
+              return 301 https://$host$request_uri;
+            }
+            server {
+              listen 443 ssl;
+              ssl_certificate      /certs/nginx_certificate.pem;
+              ssl_certificate_key  /certs/nginx_key.pem;
+              ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;
+              ssl_prefer_server_ciphers   on;
+              ssl_ciphers                 EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+              add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+              server_tokens off;
+              client_max_body_size 50M;
 
+              location / {
+                proxy_pass http://semaphore:3000;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_read_timeout 3m;
+                proxy_send_timeout 3m;
+              }
+            }
+          }
+
+    - name: copy key
+      ansible.builtin.copy:
+        src: "/config/certs/key.pem"
+        dest: "/root/nginx/key.pem"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: copy ca
+      ansible.builtin.copy:
+        src: "/config/certs/crt_ca.pem"
+        dest: "/root/nginx/ca.pem"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Create nginx container
+      community.docker.docker_container:
+        name: nginx
+        image: "nginx:stable-alpine"
+        state: started
+        recreate: no
+        restart_policy: always
+
+        volumes:
+          - "/root/nginx/key.pem:/certs/nginx_key.pem:ro"
+          - "/root/nginx/ca.pem:/certs/nginx_certificate.pem:ro"
+          - "/root/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+
+        ports:
+          - "0.0.0.0:443:443"
+          - "0.0.0.0:80:80"
+        env:
+          NGINX_WORKER_PROCESSES: "4"
+          NGINX_WORKER_CONNECTIONS: "768"
+
+        networks:
+          - name: semaphoreNet
+
+        comparisons:
+          networks: strict
