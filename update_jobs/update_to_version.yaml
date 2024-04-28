@@ -3,6 +3,9 @@
   hosts: all
   become: true
 
+  vars:
+    version: "40"
+
   tasks:
     # 39 -> 40
     - name: remove libva-intel-media-driver

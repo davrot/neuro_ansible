@@ -3,6 +3,9 @@
   hosts: all
   become: true
 
+  vars:
+    version: "40"
+
   tasks:
     - name: disable nvidia-driver
       shell: "dnf -y module disable nvidia-driver"

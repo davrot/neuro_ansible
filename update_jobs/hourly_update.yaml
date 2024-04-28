@@ -3,6 +3,10 @@
   hosts: all
   become: true
 
+  vars:
+    version: "{{ version | default('40') }}"
+    base_path: "{{ base_path | '/web/repos/Fedora'  }}"
+
   tasks:
     - name: block shutdown
       blockinfile:

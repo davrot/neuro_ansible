@@ -3,6 +3,9 @@
   hosts: all
   become: true
 
+  vars:
+    version: "40"
+
   tasks:
     - name: Make sure systemd-oomd service unit is stopped
       systemd_service:
