@@ -2,6 +2,7 @@
 - name: install our repos
   hosts: all
   become: true
+  ignore_unreachable: true
 
   vars:
     version: "{{ version | default('40') }}"

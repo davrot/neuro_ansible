@@ -7,6 +7,12 @@
     version: "40"
 
   tasks:
+    # 39 -> 40
+    - name: remove texlive-alterqcm-doc
+      ansible.builtin.dnf:
+        name: "texlive-alterqcm-doc"
+        state: removed
+
     - name: Make sure systemd-oomd service unit is stopped
       systemd_service:
         state: stopped
