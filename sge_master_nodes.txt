@@ -1,0 +1,58 @@
+rockylinux-9-default_20221109_amd64.tar.xz
+
+yum install mc nfs-utils nfs-utils-coreos nfsv4-client-utils rpcbind openssh openssh-server wget
+systemctl start rpcbind
+systemctl enable rpcbind
+systemctl start sshd
+systemctl enable sshd
+
+mkdir /data_1
+echo "10.10.1.51:/volume1/data_1 /data_1 nfs rw 0 0" >> /etc/fstab
+mount /data_1
+
+dnf install epel-release
+
+wget -c https://pkgs.dyn.su/el8/base/x86_64/raven-release.el8.noarch.rpm
+
+vi /etc/yum.repos.d/sge.repo
+
+[copr:copr.fedorainfracloud.org:loveshack:SGE]
+name=Copr repo for SGE owned by loveshack
+baseurl=https://download.copr.fedorainfracloud.org/results/loveshack/SGE/epel-9-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/loveshack/SGE/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+
+[raven]
+name=Raven's RPM repo for el8-$basearch - base
+baseurl=https://pkgs.sysadmins.ws/el8/base/$basearch/
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-raven
+gpgcheck=1
+enabled=1
+
+yum install libdb4-utils
+yum install gridengine-*
+
+# copy /opt/sge to /data_1/sge
+# sge_qmaster     6444/tcp  sge-qmaster   # Grid Engine Qmaster Service
+# sge_qmaster     6444/udp  sge-qmaster   # Grid Engine Qmaster Service
+
+export SGE_ROOT=/data_1/sge
+echo $SGE_ROOT
+export SGE_CELL=neuro
+export $SGE_QMASTER_PORT=6444
+export $SGE_EXECD_PORT=6445
+export $SGE_CLUSTER_NAME=neuro
+
+. /data_1/sge/neuro/common/settings.sh
+
+\cp /data_1/sge/sge.sh /etc/profile.d/sge.sh
+\cp /data_1/sge/sgeexecd.Neuro /etc/rc.d/init.d/sgeexecd.Neuro
+systemctl daemon-reload
+systemctl stop sgeexecd.Neuro
+killall -9 /sge-root/bin/lx-amd64/sge_execd
+systemctl start sgeexecd.Neuro

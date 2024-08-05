@@ -1,0 +1,36 @@
+---
+- name: install cron server
+  hosts: all
+  become: true
+  # Todo:
+  # systemctl enable crond
+  # systemctl start crond
+  tasks:
+    - name: remove other files
+      include_tasks: yaml_sub/myrepo_clean.yaml
+    - name: update file myrepo.repo
+      import_tasks: yaml_sub/myrepo_data.yaml
+
+    - name: install nfs tools
+      dnf:
+        name: nfs-utils,nfs-utils-coreos,nfsv4-client-utils,rpcbind,cronie,rsync
+        state: present
+        update_cache: true
+        skip_broken: true
+        nobest: false
+        allowerasing: true
+
+    - name: Make sure rpcbind service unit is started
+      systemd_service:
+        enabled: true
+        state: started
+        name: rpcbind
+
+    - name: Mount /data_1
+      ansible.posix.mount:
+        src: 10.10.1.51:/volume1/data_1
+        path: /data_1
+        opts: rw,sync,hard,nolock
+        boot: true
+        state: mounted
+        fstype: nfs

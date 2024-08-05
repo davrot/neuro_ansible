@@ -46,14 +46,14 @@
     state: mounted
     fstype: nfs
 
-- name: Mount /0
-  ansible.posix.mount:
-    src: 10.10.1.1:/volume1/data
-    path: /0
-    opts: rw,sync,hard,nolock
-    boot: true
-    state: mounted
-    fstype: nfs
+# - name: Mount /0
+#   ansible.posix.mount:
+#     src: 10.10.1.1:/volume1/data
+#     path: /0
+#     opts: rw,sync,hard,nolock
+#     boot: true
+#     state: mounted
+#     fstype: nfs
 
 - name: Mount /sge-root
   ansible.posix.mount:
