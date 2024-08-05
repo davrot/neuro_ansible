@@ -1,0 +1,44 @@
+services:
+  pihole:
+    image: "pihole/pihole"
+    container_name: piholecompose
+    hostname: pihole
+    restart: always
+
+    environment:
+      TZ: Europe/Berlin
+      PIHOLE_DNS_: 134.102.20.20;8.8.8.8;8.8.4.4
+      DHCP_ACTIVE: true
+      DHCP_START: 10.10.220.1
+      DHCP_END: 10.10.224.254
+      DHCP_ROUTER: 10.10.0.250
+      DHCP_LEASETIME: 24
+      PIHOLE_DOMAIN: neuro.uni-bremen.de
+      DHCP_IPv6: false
+      IPv6: false
+      FTLCONF_LOCAL_IPV4: 10.10.0.5
+      WEBPASSWORD: ${WEBPASSWORD}
+      DNSMASQ_USER: pihole
+      DNSMASQ_LISTENING: all
+      DHCP_rapid_commit: true
+
+    network_mode: host
+
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+
+    volumes:
+      - "pi_hole_dnsmasq:/etc/dnsmasq.d"
+      - "pi_hole_etc:/etc/pihole"
+
+    cap_add:
+      - NET_ADMIN
+      
+volumes:
+  pi_hole_dnsmasq:
+    external: true
+  pi_hole_etc:
+    external: true
