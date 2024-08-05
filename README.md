@@ -31,3 +31,10 @@ passwd_value="PUT_A_PASSWORD_HERE"
 sshpass -p "$passwd_value" ssh-copy-id -o "StrictHostKeyChecking accept-new" ansibleuser@COMPUTERNAME
 ```
 
+# Problem with Proxmox Update 8.1 -> 8.2
+
+```
+cd /etc/pve/nodes/coreserver1/lxc/
+
+echo "lxc.cap.drop:" >> XXX.conf
+```
