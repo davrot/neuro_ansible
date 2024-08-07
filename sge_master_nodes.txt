@@ -41,6 +41,7 @@ yum install gridengine-*
 # sge_qmaster     6444/tcp  sge-qmaster   # Grid Engine Qmaster Service
 # sge_qmaster     6444/udp  sge-qmaster   # Grid Engine Qmaster Service
 
+```
 export SGE_ROOT=/data_1/sge
 echo $SGE_ROOT
 export SGE_CELL=neuro
@@ -49,10 +50,23 @@ export $SGE_EXECD_PORT=6445
 export $SGE_CLUSTER_NAME=neuro
 
 . /data_1/sge/neuro/common/settings.sh
+cd /data_1/sge/
+install_qmaster
+```
 
+Cron:
+
+```
+0 * * * * source /data_1/sge/neuro/common/settings.sh ; /bin/sh /data_1/Service/sge/clean_sge_error.sh
+```
+
+Concerning updating the clients:
+
+```
 \cp /data_1/sge/sge.sh /etc/profile.d/sge.sh
 \cp /data_1/sge/sgeexecd.Neuro /etc/rc.d/init.d/sgeexecd.Neuro
 systemctl daemon-reload
 systemctl stop sgeexecd.Neuro
 killall -9 /sge-root/bin/lx-amd64/sge_execd
 systemctl start sgeexecd.Neuro
+```
